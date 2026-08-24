@@ -1,6 +1,6 @@
-# libK044AVT - Biblioteca Nativa do TEC44FST
+# libK044AVT - Biblioteca Nativa do TEC44AVT
 
-Biblioteca compartilhada (`libK044AVT.so`) para comunicação com o teclado TEC44FST (teclado programável com 44 teclas, leitor de impressão digital, display LCD e outras funcionalidades).
+Biblioteca compartilhada (`libK044AVT.so`) para comunicação com o teclado TEC44AVT (teclado programável com 44 teclas, leitor de impressão digital, display LCD e outras funcionalidades).
 
 ## 📋 Requisitos
 
