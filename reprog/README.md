@@ -1,13 +1,13 @@
 # K044AVT Reprog - Reprogramador de Scancodes
 
-Aplicativo com interface gráfica (Java Swing) para reprogramação dos scancodes do teclado programável **TEC44FST** (44 teclas).
+Aplicativo com interface gráfica (Java Swing) para reprogramação dos scancodes do teclado programável **TEC44AVT** (44 teclas).
 
 ## 📋 O que é?
 
 O K044AVT Reprog é uma ferramenta visual para:
 - **Ler** a tabela de scancodes armazenada na EEPROM do teclado
 - **Editar** o mapeamento de teclas (MAKE e BREAK)
-- **Programar** novas configurações na EEPROM
+- **Programar** novas configurações no scancodes das teclas
 - **Comparar** configuração atual vs. configuração guardada
 
 ## 🚀 Instalação Rápida
@@ -24,7 +24,7 @@ O K044AVT Reprog é uma ferramenta visual para:
    sudo apt-get install -y default-jdk
    ```
 
-3. **Teclado TEC44FST conectado** na porta PS/2 roxa
+3. **Teclado TEC44AVT conectado** na porta PS/2 roxa
 
 ### Instalação do Reprog
 
@@ -93,14 +93,14 @@ A interface possui três abas principais:
 
 ## ⚠️ Requisitos
 
-| Item | Detalhes |
-|------|----------|
-| **OS** | Linux (Ubuntu/Debian recomendado) |
-| **Java** | JDK 11+ |
-| **libK044AVT** | Versão compilada e instalada |
-| **Hardware** | TEC44FST conectado na porta PS/2 |
-| **Privilégios** | Root (via `pkexec`) |
-| **Espaço** | ~3 MB (JAR) |
+| Item            | Detalhes                          |
+|-----------------|-----------------------------------|
+| **OS**          | Linux (Ubuntu/Debian recomendado) |
+| **Java**        | JDK 11+                           |
+| **libK044AVT**  | Versão compilada e instalada      |
+| **Hardware**    | TEC44AVT conectado na porta PS/2  |
+| **Privilégios** | Root (via `pkexec`)               |
+| **Espaço**      | ~3 MB (JAR)                       | 
 
 ## 📚 Exemplos de Scancodes
 
@@ -108,17 +108,17 @@ Alguns scancodes comuns do teclado:
 
 | Tecla | MAKE | BREAK |
 |-------|------|-------|
-| A | 1C | F0 1C |
-| ENTER | 5A | F0 5A |
-| ESC | 76 | F0 76 |
-| SPACE | 29 | F0 29 |
+| A     | 1C   | F0 1C |
+| ENTER | 5A   | F0 5A |
+| ESC   | 76   | F0 76 |
+| SPACE | 29   | F0 29 |
 
 > Consulte o manual completo para lista completa
 
 ## 🐛 Troubleshooting
 
 ### "Nenhum dispositivo conectado"
-- Verifique se o TEC44FST está conectado na porta PS/2 **roxa**
+- Verifique se o TEC44AVT está conectado na porta PS/2 **roxa**
 - Tente desconectar e reconectar
 - Reinicie o aplicativo
 
