@@ -1,6 +1,6 @@
 # Exemplos - Módulo Fingerprint (Leitor de Impressão Digital)
 
-Exemplos práticos de uso do módulo de impressão digital do TEC44FST em C++ e Java.
+Exemplos práticos de uso do módulo de impressão digital do TEC44AVT em C++ e Java.
 
 ## 📋 Funcionalidades Demonstradas
 
@@ -17,11 +17,8 @@ Exemplos práticos de uso do módulo de impressão digital do TEC44FST em C++ e 
 ```
 cpp/
 ├── Makefile              Arquivo de compilação
-├── finger.cpp            Menu CLI interativo
-├── finger2.cpp           Versão 2 (com event loop)
 ├── finger2_v2.cpp        Versão 2.1 (API de alto nível)
-├── fp_diag               Ferramenta de diagnóstico
-└── Binários compilados   (finger, finger2, finger2_v2, fp_diag)
+└── Binários compilados   (finger2_v2)
 ```
 
 ### 🚀 Compilação e Execução
@@ -32,18 +29,8 @@ cd cpp
 # Compilar todos
 make
 
-# Executar versão básica (menu)
-sudo ./finger
-
-# Executar versão 2 (com event loop + uinput)
-sudo ./finger2
-
 # Executar versão 2.1 (API de alto nível)
 sudo ./finger2_v2
-
-# Ferramenta de diagnóstico
-sudo ./fp_diag
-```
 
 ### 📖 Descrição dos Programas
 
@@ -52,22 +39,12 @@ sudo ./fp_diag
 - Operações: Info, Count, Enroll, Identify, Search, Delete, Empty, Sleep
 - Bom para entender a API básica
 
-#### `finger2` - Com Event Loop
-- Integra event loop para ler eventos do teclado
-- Teclado auxiliar ativo simultaneamente
-- Mais complexo, mostra integração completa
-
 #### `finger2_v2` - API de Alto Nível
 - Usa funções de alto nível da biblioteca
-- Mesma interface que `finger2`
-- Código mais limpo e manutenível
 
 ### 🛠️ Opções de Compilação
 
 ```bash
-# Apenas recompila finger.cpp
-make finger
-
 # Remove objetos e binários
 make clean
 
@@ -103,10 +80,6 @@ cd java
 # Compilar e empacotar
 mvn clean package
 
-# Executar FingerDemo (original)
-sudo java -Djna.library.path=../../../libk044avt/lib \
-         -jar target/k044-fingerprint-demo-1.0.0.jar
-
 # Executar FingerDemo2 (API alto nível)
 sudo java -Djna.library.path=../../../libk044avt/lib \
          -cp target/k044-fingerprint-demo-1.0.0.jar \
@@ -136,14 +109,14 @@ mvn clean
 
 ## 📊 Comparação: C++ vs Java
 
-| Aspecto | C++ | Java |
-|---------|-----|------|
-| **Interface** | CLI (terminal) | GUI (Swing) |
-| **Performance** | Nativa (mais rápido) | JVM (mais lento) |
-| **Portabilidade** | Baixa | Alta |
-| **Desenvolvimento** | Mais código | Menos código |
-| **Debugging** | GDB | IDE do Java |
-| **Instalação** | Requer compilação | JAR pronto |
+| Aspecto             | C++                  | Java             |
+|---------------------|----------------------|------------------|
+| **Interface**       | CLI (terminal)       | GUI (Swing)      |
+| **Performance**     | Nativa (mais rápido) | JVM (mais lento) |
+| **Portabilidade**   | Baixa                | Alta             |
+| **Desenvolvimento** | Mais código          | Menos código     |
+| **Debugging**       | GDB                  | IDE do Java      |
+| **Instalação**      | Requer compilação    | JAR pronto       |
 
 ## 🔧 Pré-requisitos Detalhados
 
@@ -189,12 +162,6 @@ ls -l /usr/local/include/display_driver.h
 ### Avançado? Explore:
 1. **C++**: `finger2_v2.cpp` - Código bem estruturado
 2. **Java**: `FingerDemo2.java` - API de alto nível
-
-## 📚 Documentação Adicional
-
-- API Reference: Ver `display_driver.h`
-- Tutorial C++: Comentários em `finger.cpp`
-- Tutorial Java: Comentários em `FingerDemo.java`
 
 ## ⚠️ Notas Importantes
 
