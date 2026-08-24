@@ -12,11 +12,7 @@ import java.util.Map;
 /**
  * Interface JNA mapeando as rotinas do módulo de impressão digital exportadas
  * por libK044AVT.so (funções k044_fp_*), mais o ciclo de vida do dispositivo.
- *
- * O firmware do AT89S52 faz o passthrough PS/2 (0xAD/0xAE) &lt;-&gt; UART do módulo;
- * do lado Java basta chamar estas funções — o protocolo do sensor é tratado
- * inteiramente dentro da biblioteca.
- *
+ * 
  * A propriedade de sistema jna.library.path deve apontar para o diretório com
  * a libK044AVT.so (../../../driver_display a partir desta pasta):
  *   java -Djna.library.path=../../../driver_display -jar &lt;fat-jar&gt;.jar
