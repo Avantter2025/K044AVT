@@ -179,7 +179,7 @@ reprog/
 ## 📖 Mais Informações
 
 Para documentação completa:
-- Consulte o manual do TEC44FST
+- Consulte o manual do TEC44AVT
 - Veja exemplos em `exemplos/reprog/` no repositório principal
 - Documentação de API: `libk044avt/README.md`
 
