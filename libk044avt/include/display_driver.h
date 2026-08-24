@@ -2,13 +2,13 @@
  * display_driver.h — API pública da biblioteca libK044AVT.so
  *
  * Biblioteca de espaço de usuário para comunicação com o dispositivo
- * Avanttec TEC44FST (AT89S52) via porta PS/2 de hardware.
+ * Avanttec TEC44AVT via porta PS/2 de hardware.
  *
- * Controla: LCD HD44780 40 colunas × 2 linhas, PIN pad 20 teclas,
- *           teclado principal 44 teclas, leitor de cartão magnético ABNT.
+ * Controla: LCD HD44780 40 colunas × 2 linhas
+ *           teclado 44 teclas e outras funcionalidades
  *
  * Protocolo: PS/2 hardware (portas 0x60 / 0x64) com comandos proprietários
- *            0xA0–0xA8 para controle do display e EEPROM.
+ *            0xA0–0xA8 para controle do display e outras funcionalidades.
  *
  * REQUISITO: execução com CAP_SYS_RAWIO (root ou setcap).
  *
@@ -95,7 +95,7 @@ extern "C" {
 #define K044_SC_DEL        0xE071  /**< Delete (scancode estendido, AUX)     */
 
 /* =========================================================================
- * Configuração de runtime (melhoria 9)
+ * Configuração de runtime
  * ========================================================================= */
 
 typedef struct {
@@ -115,7 +115,7 @@ typedef struct {
 void k044_config_init(k044_config_t *cfg);
 
 /* =========================================================================
- * Níveis de log (melhoria 8)
+ * Níveis de log
  * ========================================================================= */
 
 #define K044_LOG_NONE   0
@@ -141,7 +141,7 @@ void k044_set_log_callback(void (*cb)(int level, const char *file,
                                       int line, const char *msg));
 
 /* =========================================================================
- * I/O hooks para mock/teste (melhoria 10)
+ * I/O hooks para mock/teste
  * ========================================================================= */
 
 typedef uint8_t (*k044_inb_fn_t)(uint16_t port);
@@ -285,12 +285,8 @@ int k044_write_cgram(uint8_t addr, const uint8_t data[8]);
 /**
  * Grava um dos padrões pré-definidos (ver K044_CGRAM_PRESET_*) num
  * slot da CGRAM (0-7) SEM transmitir os 8 bytes do desenho pelo canal
- * PS/2 — o firmware já tem os padrões gravados em ROM (comando 0xB5,
- * ver RWRITECGRAM_PRESET em firmware/TEC44fst.ASM). Preferir esta
- * função a k044_write_cgram() para os padrões fixos que ela cobre:
- * streaming de 8 bytes arbitrários se mostrou propenso a RESEND neste
- * hardware; só 2 bytes de parâmetro aqui reduzem bastante a chance de
- * falha.
+ * PS/2 — o firmware já tem os padrões gravados em ROM. Preferir esta
+ * função a k044_write_cgram() para os padrões fixos.
  *
  * @param pattern  Um dos K044_CGRAM_PRESET_*.
  * @param slot     Slot da CGRAM a usar (0-7).
@@ -321,8 +317,7 @@ int k044_write_char(uint8_t c);
 /**
  * Escreve 1 byte diretamente na DDRAM (posição atual do cursor), sem
  * interpretar códigos de controle — diferente de k044_write_char(), que
- * trata bytes < 0x20 como comandos (backspace, bell, etc.) e por isso
- * nunca consegue exibir um caractere CGRAM (códigos 0-7). Usar esta
+ * trata bytes < 0x20 como comandos (backspace, bell, etc.). Usar esta
  * função para mostrar caracteres customizados definidos via
  * k044_write_cgram().
  *
@@ -351,7 +346,7 @@ int k044_write_string(const char *s);
 int k044_write_buf(const uint8_t *buf, size_t len);
 
 /* =========================================================================
- * Escrita no display — funções de alto nível (melhoria 3)
+ * Escrita no display — funções de alto nível
  * ========================================================================= */
 
 /**
@@ -365,8 +360,8 @@ int k044_write_buf(const uint8_t *buf, size_t len);
 int k044_write_line(uint8_t row, const char *text);
 
 /**
- * Desloca o display inteiro usando a instrução nativa "Cursor or Display
- * Shift" do HD44780 — move todo o conteúdo já presente na DDRAM sem
+ * Desloca o display inteiro usando a instrução nativa
+ * "Cursor or Display Shift"  — move todo o conteúdo presente na DDRAM sem
  * precisar retransmitir nenhum caractere (bem mais leve que reescrever a
  * linha via k044_write_line()). Não altera o conteúdo da DDRAM em si, só
  * a janela visível — quem chama é responsável por escrever o caractere
@@ -452,7 +447,7 @@ int k044_clear(void);
 /**
  * Aguarda o dispositivo ficar livre (polling com ECHO).
  *
- * Envia comandos ECHO (0xEE) em loop com intervalo de 1ms ateh obter ACK
+ * Envia comandos ECHO (0xEE) em loop com intervalo de 1ms ate obter ACK
  * ou o timeout expirar. Util apos operacoes de display que deixam o
  * firmware ocupado (ex: HD44780 busy flag) e o proximo comando PS/2
  * precisa ser aceito sem RESEND.
@@ -511,7 +506,7 @@ int k044_erase_eol(void);
 int k044_bell(void);
 
 /* =========================================================================
- * Controle do PIN pad
+ * Controle do PIN pad (IMPLEMENTAÇÃO FUTURA)
  * ========================================================================= */
 
 /**
@@ -536,25 +531,25 @@ int k044_pin_disable(void);
  * ========================================================================= */
 
 /**
- * Habilita o teclado auxiliar conectado ao AT89S52.
+ * Habilita o teclado auxiliar.
  * Envia comando 0xA3 (AUX ENABLE).
- * O firmware repassa 0xF4 (ENABLE) ao teclado auxiliar via TRASER2.
+ * O firmware repassa 0xF4 (ENABLE) ao teclado auxiliar.
  *
  * @return K044_OK em sucesso.
  */
 int k044_aux_enable(void);
 
 /**
- * Desabilita o teclado auxiliar conectado ao AT89S52.
+ * Desabilita o teclado auxiliar.
  * Envia comando 0xAA (AUX DISABLE).
- * O firmware repassa 0xF5 (DISABLE) ao teclado auxiliar via TRASER2.
+ * O firmware repassa 0xF5 (DISABLE) ao teclado auxiliar.
  *
  * @return K044_OK em sucesso.
  */
 int k044_aux_disable(void);
 
 /* =========================================================================
- * EEPROM
+ * EEPROM (IMPLEMENTAÇÃO FUTURA)
  * ========================================================================= */
 
 /**
@@ -936,7 +931,7 @@ int k044_is_device_dead(void);
 /* =========================================================================
  * Módulo de impressão digital (fingerprint)
  *
- * Comunicação com módulo fingerprint via AT89S52 UART (Timer 2, 9600 baud).
+ * Comunicação com módulo fingerprint.
  * O firmware faz passthrough: recebe bytes do host via PS/2 (comando 0xAD),
  * retransmite ao FP module via UART, e retorna a resposta ao host.
  *
@@ -1174,49 +1169,20 @@ typedef void (*k044_fp_callback_t)(int status, int step, void *userdata);
  */
 void k044_fp_set_callback(k044_fp_callback_t cb, void *userdata);
 
-/**
- * Steps reportados via k044_fp_callback_t por k044_fp_enroll()/
- * k044_fp_search_retry() (distintos dos steps do AutoEnroll do proprio
- * sensor, comando 0x31 - nao usados aqui, ja que o sensor GSL6152 desta
- * familia de placas rejeita 0x31/0x32 com pacote malformado, cc=0xFF;
- * k044_fp_enroll()/k044_fp_search_retry() reimplementam o mesmo fluxo
- * multi-passo sobre os comandos base, que respondem de forma confiavel).
- * status no callback continua com o significado ja documentado: 0 =
- * notificacao de progresso normal, outro valor = confirmation code de
- * uma tentativa de captura malsucedida (qualidade ruim, no meio de uma
- * retentativa automatica - nao necessariamente um erro fatal).
- */
 #define K044_FP_STEP_WAIT_FINGER   1  /* aguardando o dedo */
 #define K044_FP_STEP_CAPTURED      2  /* leitura capturada com sucesso */
 #define K044_FP_STEP_REMOVE_FINGER 3  /* aguardando remocao do dedo */
 #define K044_FP_STEP_MERGING       4  /* RegModel (mesclando leituras) em andamento */
 #define K044_FP_STEP_STORING       5  /* Store (gravando no banco) em andamento */
 
-/**
- * Cadastro manual em 3 leituras (GetImage+GenChar+RegModel+Store) -
- * usado em vez de k044_fp_auto_enroll() (comando 0x31) porque o sensor
- * desta placa rejeita esse comando estendido (pacote malformado,
- * cc=0xFF); os comandos base usados aqui respondem de forma confiavel.
- * Mesmo fluxo ja validado nos exemplos (finger2.cpp/FingerDemo.java):
- * 1a leitura -> retira o dedo -> 2a leitura -> RegModel -> retira o
- * dedo -> 3a leitura -> RegModel -> Store. Reporta progresso via
- * k044_fp_set_callback() (K044_FP_STEP_*).
- *
- * @param id                 ID para armazenar (1-999)
- * @param finger_timeout_ms  timeout esperando o dedo em cada leitura
- *                           (ex.: 10000)
- * @return K044_OK em sucesso, K044_ERR_FP/K044_ERR_FP_TIMEOUT em falha -
- *         use k044_fp_last_confirmation_code() para detalhar.
- */
+
 int k044_fp_enroll(uint16_t id, int finger_timeout_ms);
 
 /**
  * Busca no banco com ate' max_attempts tentativas de captura+busca -
  * uma busca malsucedida pode ser so' posicionamento ruim do dedo nessa
  * tentativa especifica, nao ausencia real no banco; cada tentativa faz
- * uma NOVA captura (rebuscar o mesmo template geraria o mesmo
- * resultado). Mesmo fluxo ja validado em op_search()/doSearch().
- * Reporta progresso via k044_fp_set_callback() (K044_FP_STEP_*).
+ * uma NOVA captura. 
  *
  * @param buffer_id          buffer de char a usar (tipicamente 1)
  * @param start_page         pagina inicial do banco (0-based)

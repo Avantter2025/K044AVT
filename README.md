@@ -1,6 +1,6 @@
-# K044AVT - Teclado Programável TEC44FST
+# K044AVT - Teclado Programável
 
-Repositório com a biblioteca nativa `libK044AVT.so` compilada e arquivos de instalação para o teclado programável TEC44FST com funcionalidades avançadas.
+Repositório com a biblioteca nativa `libK044AVT.so` compilada e arquivos de instalação para o teclado programável TEC44AVT com funcionalidades avançadas.
 
 ## 📦 Conteúdo
 
@@ -30,11 +30,11 @@ A biblioteca libK044AVT oferece acesso a:
 - **Teclado de 44 teclas** - Programável via EEPROM
 - **Leitor de Impressão Digital** - Módulo AS608 integrado
 - **Display LCD** - 2 linhas × 40 caracteres (HD44780)
-- **PIN Pad** - Teclado numérico integrado
-- **Leitor de Cartão Magnético** - ANSI/ISO suportado
+- **PIN Pad** - Teclado numérico integrado (USO FUTURO)
+- **Leitor de Cartão Magnético** - ANSI/ISO suportado (USO FUTURO)
 - **EEPROM** - Armazenamento programável
 - **Teclado Auxiliar** - Suporte a PS/2 externo
-- **LEDs de Status** - Controle de indicadores
+- **LEDs de Status** - Controle de indicadores (USO FUTURO)
 
 ## 📚 Documentação
 
@@ -76,7 +76,7 @@ lib = ctypes.CDLL('/usr/local/lib/libK044AVT.so')
 
 - ⚡ **Requer root** - Acesso direto ao hardware PS/2
 - 🔒 **Exclusividade** - Apenas uma instância pode acessar o dispositivo
-- 📌 **Hardware específico** - Requer TEC44FST conectado
+- 📌 **Hardware específico** - Requer TEC44AVT conectado
 
 ## 🤝 Contribuições
 
