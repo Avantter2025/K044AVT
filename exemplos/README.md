@@ -7,11 +7,11 @@ Pasta contendo exemplos práticos de programas que utilizam a biblioteca libK044
 ```
 exemplos/
 ├── fingerprint/          Exemplos do módulo de impressão digital (Sensor AS608)
-│   ├── cpp/              Exemplos em C++ (finger, finger2, finger2_v2)
+│   ├── cpp/              Exemplos em C++ ( finger2_v2)
 │   ├── java/             Exemplos em Java (GUI Swing - FingerDemo)
 │   └── README.md         Documentação
 │
-└── displaylc/            Exemplos do módulo Display LCD (HD44780 2×40)
+└── displaylc/            Exemplos do módulo Display LCD (2×40)
     ├── cpp/              Exemplos em C (testes de display)
     ├── java/             Exemplos em Java (GUI - LcdDemo)
     └── README.md         Documentação
@@ -34,27 +34,21 @@ exemplos/
    sudo apt-get install -y build-essential default-jdk maven
    ```
 
-3. **Teclado TEC44FST conectado** na porta PS/2 roxa
+3. **Teclado TEC44AVT conectado** na porta PS/2 roxa
 
 ## 📚 Exemplos Disponíveis
 
-### 🔴 Fingerprint (Leitor de Impressão Digital - AS608)
+### 🔴 Fingerprint (Leitor de Impressão Digital)
 
 #### C++ - Menu CLI Interativo
 
 ```bash
 cd exemplos/fingerprint/cpp
 make                      # Compila todos
-sudo ./finger             # Menu básico
-sudo ./finger2            # Com event loop
 sudo ./finger2_v2         # API alto nível
 ```
-
 **Programas disponíveis:**
-- `finger` - Menu CLI simples (Enroll, Search, Delete, etc.)
-- `finger2` - Com event loop + teclado auxiliar
 - `finger2_v2` - API de alto nível simplificada
-- `fp_diag` - Ferramenta de diagnóstico
 
 #### Java - Interface Gráfica
 
@@ -72,7 +66,7 @@ sudo java -Djna.library.path=../../../libk044avt/lib \
 
 ---
 
-### 🟢 Display LCD (HD44780 2×40)
+### 🟢 Display LCD (2×40)
 
 #### C - Vários Testes
 
@@ -144,19 +138,19 @@ Consulte o README específico de cada módulo:
 
 ## 📊 Comparação: Fingerprint vs Display LCD
 
-| Aspecto | Fingerprint | Display LCD |
-|---------|-------------|-------------|
-| **Módulo** | Leitor biométrico AS608 | Display HD44780 2×40 |
-| **Exemplo C/C++** | Menu CLI + Event loop | Vários testes específicos |
-| **Exemplo Java** | GUI com painel animado | GUI com controles |
-| **Operações** | Enroll, Search, Delete | Escrever, posicionar, scroll |
-| **Complexidade** | Média | Baixa |
+| Aspecto           | Fingerprint             | Display LCD                  |
+|-------------------|-------------------------|------------------------------|
+| **Módulo**        | Leitor biométrico AS608 | Display HD44780 2×40         |
+| **Exemplo C/C++** | Menu CLI + Event loop   | Vários testes específicos    |
+| **Exemplo Java**  | GUI com painel animado  | GUI com controles            |
+| **Operações**     | Enroll, Search, Delete  | Escrever, posicionar, scroll |
+| **Complexidade**  | Média                   | Baixa                        |
 
 ## ⚠️ Notas Importantes
 
 - ⚡ **Requer root** - Todos os exemplos precisam de `sudo` para acessar o hardware
 - 🔒 **Exclusividade** - Apenas uma instância pode acessar o dispositivo por vez
-- 📌 **Hardware específico** - Requer TEC44FST conectado na porta PS/2 roxa
+- 📌 **Hardware específico** - Requer TEC44AVT conectado na porta PS/2 roxa
 - 💡 **Uma instância por vez** - Feche a anterior antes de abrir nova
 
 ## 🐛 Troubleshooting
