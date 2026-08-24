@@ -1,6 +1,6 @@
-# Exemplos - Módulo Display LCD (HD44780 2×40)
+# Exemplos - Módulo Display LCD 2×40
 
-Exemplos práticos de uso do display LCD do TEC44FST em C e Java.
+Exemplos práticos de uso do display LCD do TEC44AVT em C e Java.
 
 ## 📋 Funcionalidades Demonstradas
 
@@ -148,13 +148,13 @@ mvn clean
 
 ## 📊 Comparação: C vs Java
 
-| Aspecto | C | Java |
-|---------|---|------|
-| **Tipo** | CLI Testes | GUI/Aplicação |
-| **Performance** | Nativa (mais rápido) | JVM (mais lento) |
-| **Uso** | Prototipagem/Debug | Produção |
-| **Desenvolvimento** | Mais baixo nível | Mais alto nível |
-| **Recursos** | Leve | Pesado |
+| Aspecto             | C                    | Java             |
+|---------------------|----------------------|------------------|
+| **Tipo**            | CLI Testes           | GUI/Aplicação    |
+| **Performance**     | Nativa (mais rápido) | JVM (mais lento) |
+| **Uso**             | Prototipagem/Debug   | Produção         |
+| **Desenvolvimento** | Mais baixo nível     | Mais alto nível  |
+| **Recursos**        | Leve                 | Pesado           |
 
 ## 🔧 Pré-requisitos
 
@@ -220,7 +220,7 @@ int main() {
     k044_lcd_write("Olá!");
     
     k044_lcd_set_cursor(1, 0);
-    k044_lcd_write("TEC44FST");
+    k044_lcd_write("TEC44AVT");
     
     // ... usar o display ...
     
@@ -243,7 +243,7 @@ int main() {
 
 - 🔴 **Requer sudo** - Acesso ao hardware PS/2
 - 🔴 **Exclusivo** - Apenas uma instância por vez
-- 🔴 **Hardware** - TEC44FST conectado obrigatório
+- 🔴 **Hardware** - TEC44AVT conectado obrigatório
 - 💡 **Display HD44780** - 2 linhas × 40 caracteres
 
 ## 🐛 Troubleshooting
@@ -294,7 +294,7 @@ sudo java -Djna.library.path=/usr/local/lib -jar target/seu-app.jar
 
 Para mais informações:
 - Ver `display_driver.h` para API completa
-- Consulte manual do HD44780 para controles avançados
+- Consulte manual do display para controles avançados
 - Exemplos em código-fonte têm comentários detalhados
 
 ---
@@ -302,4 +302,4 @@ Para mais informações:
 **Última atualização**: 2026-08-24  
 **Versão**: 1.0  
 **Plataforma**: Linux (x86_64)  
-**Display**: HD44780 2×40 caracteres
+**Display**: 2×40 caracteres
