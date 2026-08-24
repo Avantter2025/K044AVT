@@ -16,10 +16,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Painel Swing que desenha uma digital estilizada e a anima como um sensor de
- * leitura: uma barra de varredura percorre a digital de baixo para cima, com um
- * brilho pulsante, enquanto uma operação (cadastro/identificação/busca) está em
- * andamento. Ao terminar, pisca verde (sucesso) ou vermelho (falha).
- *
+ * leitura: 
  * Toda a "imagem animada" é renderizada por código (Java2D) — não há asset
  * binário externo, então o exemplo é autocontido.
  */
