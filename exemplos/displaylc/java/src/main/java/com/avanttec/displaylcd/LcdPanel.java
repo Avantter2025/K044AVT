@@ -49,9 +49,7 @@ public class LcdPanel extends JPanel {
     private static final Color COLOR_CURSOR    = new Color(0xC8, 0xFF, 0xB0);
 
     /**
-     * Bitmaps 5x8 dos padrões pré-gravados em ROM (mesmos bytes de
-     * CGRAM_PATTERN_* em firmware/TEC44fst.ASM e dos arrays que existiam em
-     * lcd.cpp antes da migração pra ROM) — índice 1-9, casando com
+     * Bitmaps 5x8 dos padrões pré-gravados em ROM — índice 1-9, casando com
      * DisplayLib.K044_CGRAM_PRESET_*. Usado só pra desenhar visualmente o
      * caractere customizado no slot certo; não é lido do hardware.
      */
@@ -69,9 +67,7 @@ public class LcdPanel extends JPanel {
     };
 
     /** Sentinela: valores 1-9 no grid significam "desenhar o bitmap do
-     * preset N aqui" em vez de um caractere de texto normal (nenhum texto
-     * real usa códigos < 0x20, mesma faixa que o firmware trata como
-     * controle — ver CHK_CARAC em firmware/DISP40.INC). */
+     * preset N aqui" em vez de um caractere de texto normal  */
     private static boolean isCustomSlotMarker(char c) {
         return c >= 1 && c <= 9;
     }
@@ -114,8 +110,7 @@ public class LcdPanel extends JPanel {
         repaint();
     }
 
-    /** Apaga da coluna indicada até o fim da linha (equivalente visual a
-     * k044_set_cursor()+k044_erase_eol()). */
+    /** Apaga da coluna indicada até o fim da linha. */
     public void eraseToEol(int row, int col) {
         if (row < 0 || row >= ROWS) return;
         for (int c = Math.max(0, col); c < COLS; c++) grid[row][c] = ' ';
@@ -123,11 +118,8 @@ public class LcdPanel extends JPanel {
     }
 
     /** Roda as 40 colunas de ambas as linhas em si mesmas — equivalente
-     * visual do shift nativo do HD44780 (k044_display_shift()) nesta
-     * hardware específica, que é 2x40 sem margem de DDRAM oculta (nada de
-     * texto "fora da tela" pra revelar, ver CLAUDE.md): direction=0 desloca
-     * pra esquerda (cada coluna recebe o conteúdo da coluna seguinte, a
-     * última fica em branco), direction=1 desloca pra direita. */
+     * visual do shift nativo do HD44780: 
+     * direction=0 desloca pra esquerda  direction=1 desloca pra direita. */
     public void rotate(int direction) {
         for (char[] r : grid) {
             if (direction == 1) {
@@ -144,9 +136,8 @@ public class LcdPanel extends JPanel {
     }
 
     /** Marca uma posição pra desenhar o bitmap do padrão CGRAM pré-gravado
-     * (ver DisplayLib.K044_CGRAM_PRESET_*, 1-9) em vez de um caractere de
-     * texto — usado pelos itens "Caractere customizado"/"Escrever
-     * caractere já gravado". */
+     * ( 1-9) em vez de um caractere de texto — usado pelos itens 
+     * "Caractere customizado"/"Escrever  caractere já gravado". */
     public void setCustomChar(int row, int col, int presetId) {
         if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
         if (presetId < 1 || presetId >= PRESET_BITMAPS.length) return;
