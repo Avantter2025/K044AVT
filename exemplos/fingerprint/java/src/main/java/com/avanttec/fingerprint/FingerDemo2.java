@@ -26,19 +26,10 @@ import java.util.List;
 /**
  * "Revisão 2" de {@link FingerDemo}: mesma GUI/comportamento, mas
  * cadastrar/identificar/buscar usam as funções de alto nível
- * {@code k044_fp_enroll()}/{@code k044_fp_search_retry()}
- * (driver_display/display_driver.h) em vez de reimplementar o fluxo
- * multi-passo (esperar dedo, capturar, retirar, capturar de novo, mesclar,
- * gravar) aqui no exemplo — mesma migração já feita no lado C++, ver
+ * — mesma migração já feita no lado C++, ver
  * exemplos/fingerprint/cpp/finger2_v2.cpp.
  *
- * {@link FingerDemo} (o original) permanece intocado — este arquivo existe
- * em paralelo, para não arriscar regressão no exemplo já validado. Compare
- * doEnroll/doIdentify/doSearch aqui com os equivalentes em FingerDemo: a
- * lógica de espera/retentativa saiu do exemplo e foi embutida na
- * biblioteca (reaproveitável por qualquer binding — C, C++, Java, Python —
- * sem duplicar o state machine em cada um).
- *
+  *
  * Executar (a partir desta pasta) — usa o MESMO jar sombreado de
  * FingerDemo, só troca "-jar" (que força o Main-Class do manifesto) por
  * "-cp jar classe" (que não força):
@@ -56,7 +47,7 @@ public class FingerDemo2 extends JFrame {
     private JButton connectBtn;
     private boolean connected = false;
 
-    // Mantém referência forte ao callback (evita coleta pelo GC durante o uso).
+    // Mantém referência forte ao callback.
     // Entende os K044_FP_STEP_* relatados por k044_fp_enroll()/
     // k044_fp_search_retry(), mesmo texto de fp_progress() em finger2_v2.cpp.
     private final FingerprintLib.FpCallback progressCb = (status, step, ud) ->
@@ -104,12 +95,7 @@ public class FingerDemo2 extends JFrame {
         setLocationRelativeTo(null);
 
         /* setDefaultCloseOperation(EXIT_ON_CLOSE) chama System.exit()
-         * direto, sem passar por toggleConnect() — se o usuario fechar a
-         * janela (ou o processo receber SIGTERM/Ctrl+C) ainda conectado,
-         * k044_close() nunca seria chamado, deixando o CCB do i8042
-         * alterado (atkbd/psmouse fora, ver k044_open()) e o dispositivo
-         * sem ser resetado. O shutdown hook da JVM roda para qualquer
-         * caminho de saida normal, entao cobre todos esses casos. */
+         * direto, sem passar por toggleConnect() — se o usuario fechar a janela */
         Runtime.getRuntime().addShutdownHook(new Thread(this::disconnectDevice));
     }
 
@@ -192,14 +178,8 @@ public class FingerDemo2 extends JFrame {
             return;
         }
 
-        /* Mantem teclado TEC44FST (44 teclas), teclado auxiliar (110
-         * teclas, porta PS/2 propria do AT89S52) e mouse PS/2 vivos no
-         * sistema enquanto este programa roda — sem isto, k044_open() ja
-         * desliga atkbd/psmouse do kernel (CCB=0x04) e nada mais fica
-         * escutando o barramento em favor deles (mesmo padrao de
-         * exemplos/fingerprint/cpp/finger2_v2.cpp). Nenhuma das tres e
-         * fatal se falhar (ex. /dev/uinput sem permissao, ou nenhum
-         * dispositivo fisico no canal correspondente). */
+        /* Mantem teclado TEC44avT, teclado auxiliar e mouse PS/2 vivos no
+         * sistema durante a execucao */
         if (fp.k044_uinput_enable() != FingerprintLib.K044_OK)
             log("Aviso: uinput indisponível (teclado não será repassado ao sistema).");
         if (fp.k044_mouse_enable() != FingerprintLib.K044_OK)
@@ -269,9 +249,7 @@ public class FingerDemo2 extends JFrame {
     private static final int FP_TIMEOUT_MS = 10000;
 
     /* Cadastro em 3 leituras — todo o fluxo (esperar/capturar/retirar/
-     * mesclar/gravar) agora mora em k044_fp_enroll() (display_driver.c);
-     * aqui só chamamos e reportamos o resultado. Compare com doEnroll em
-     * FingerDemo.java, que reimplementa o mesmo fluxo linha a linha. */
+     * mesclar/gravar) agora em k044_fp_enroll() */
     private OpTask doEnroll = scanOp(() -> {
         int id = askInt("ID para cadastrar (1-999)", 1);
         if (id < 0) return cancelled();
@@ -284,8 +262,7 @@ public class FingerDemo2 extends JFrame {
     });
 
     /* Identificação = busca de tentativa única (maxAttempts=1), mesma
-     * simplificação já usada em FingerDemo.java/finger2_v2.cpp (o Search
-     * base do AS608 não aceita threshold de score). */
+     * simplificação já usada em FingerDemo.java/finger2_v2.cpp */
     private OpTask doIdentify = scanOp(() -> {
         log("   coloque o dedo para identificar...");
         ShortByReference id = new ShortByReference((short) 0xFFFF);
@@ -299,7 +276,7 @@ public class FingerDemo2 extends JFrame {
     });
 
     /* Busca com até 3 tentativas de captura+busca — fluxo completo agora
-     * em k044_fp_search_retry(). Compare com doSearch em FingerDemo.java. */
+     * em k044_fp_search_retry(). */
     private OpTask doSearch = scanOp(() -> {
         log("   coloque o dedo para buscar no banco (até 3 tentativas)...");
         ShortByReference id = new ShortByReference((short) 0xFFFF);
@@ -313,8 +290,7 @@ public class FingerDemo2 extends JFrame {
     });
 
     /* Controla o LED do sensor (comando 0x3C, PS_ControlBLN) — cor azul
-     * fixa, mesmo mapeamento de FingerDemo.java. Não lê o dedo, então usa
-     * quickOp (sem animação de varredura). */
+     * fixa. Não lê o dedo, usa quickOp (sem animação de varredura). */
     private OpTask doLed = quickOp(() -> {
         String[] options = { "Aceso", "Apagado", "Piscando (rápido)", "Piscando lento (respirando)" };
         int choice = JOptionPane.showOptionDialog(this, "Modo do LED", "LED do sensor",
@@ -349,12 +325,7 @@ public class FingerDemo2 extends JFrame {
         NFPage p = new NFPage();
         int r = fp.k044_fp_read_nfpage(p);
         if (r != 0) { log("   ✗ falha ao ler info (" + r + ")"); return r; }
-        /* JNA nao sincroniza automaticamente os campos Java a partir da
-         * memoria nativa apos a chamada, a menos que a Structure seja
-         * declarada como Structure.ByReference — sem isto os campos
-         * ficavam nos valores padrao (0/vazio) mesmo com a chamada
-         * nativa tendo escrito dados reais (confirmado: k044_fp_read_nfpage
-         * retornava K044_OK, mas registros/SN/etc apareciam zerados). */
+        /* JNA nao sincroniza automaticamente os campos Java  */
         p.read();
         log("   registros=" + (p.registros & 0xFFFF)
                 + " capacidade=" + (p.database_size & 0xFFFF)
