@@ -34,11 +34,6 @@ sudo ./finger2_v2
 
 ### 📖 Descrição dos Programas
 
-#### `finger` - Menu CLI Básico
-- Interface de linha de comando simples
-- Operações: Info, Count, Enroll, Identify, Search, Delete, Empty, Sleep
-- Bom para entender a API básica
-
 #### `finger2_v2` - API de Alto Nível
 - Usa funções de alto nível da biblioteca
 
