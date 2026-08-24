@@ -58,7 +58,6 @@ java/
 ├── src/
 │   ├── main/java/        Código-fonte
 │   │   └── com/avanttec/fingerprint/
-│   │       ├── FingerDemo.java
 │   │       ├── FingerDemo2.java        (Versão 2 - API alto nível)
 │   │       ├── FingerprintLib.java     (Binding JNA)
 │   │       └── FingerprintScanPanel.java
