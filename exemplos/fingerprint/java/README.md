@@ -56,14 +56,14 @@ A propriedade `-Djna.library.path` aponta para o diretório com `libK044AVT.so`.
 ### Via fat-JAR (recomendado)
 
 ```bash
-sudo java -Djna.library.path=/home/SEU_USERNAME/Projetos/projetos-ubuntu/avanttec_project/driver_display \
+sudo java -Djna.library.path=/home/SEU_USERNAME/driver_display \
      -jar target/k044-fingerprint-demo-1.0.0.jar
 ```
 
 Ou, a partir da pasta `java/`, use o caminho relativo:
 
 ```bash
-sudo java -Djna.library.path=../../../driver_display \
+sudo java -Djna.library.path= driver_display \
      -jar target/k044-fingerprint-demo-1.0.0.jar
 ```
 
@@ -74,7 +74,7 @@ externas além de `libK044AVT.so`.
 
 ```bash
 JNA=$(find ~/.m2 -name 'jna-5.14.0.jar' | head -1)
-sudo java -Djna.library.path=../../../driver_display \
+sudo java -Djna.library.path= driver_display \
      -cp "target/classes:$JNA" com.avanttec.fingerprint.FingerDemo
 ```
 
@@ -94,7 +94,7 @@ sudo java -Djna.library.path=/caminho/absoluto/para/driver_display \
 2. Ou configure a variável `jna.library.path` nas propriedades do projeto
    (Project Properties → Run → VM Options):
    ```
-   -Djna.library.path=/home/SEU_USERNAME/Projetos/projetos-ubuntu/avanttec_project/driver_display
+   -Djna.library.path=/home/SEU_USERNAME/driver_display
    ```
 
 ### Interface da aplicação
