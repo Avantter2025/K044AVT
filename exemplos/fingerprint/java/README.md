@@ -2,7 +2,7 @@
 
 GUI de demonstração do módulo de digital do dispositivo Avanttec (TEC44AVT),
 falando com o sensor **através do driver** `libK044AVT.so` (JNA) — o firmware do
-TEC44AVT faz o passthrough PS/2 `0xAD`/`0xAE` ⇄ UART do módulo, então o lado Java
+TEC44AVT faz o passthrough PS/2 `0xAD`/`0xAE` ⇄ com o módulo, então o lado Java
 só usa as rotinas `k044_fp_*`.
 
 Durante cada leitura (cadastro/identificação/busca), o painel exibe uma
