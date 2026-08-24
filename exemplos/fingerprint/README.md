@@ -149,11 +149,7 @@ ls -l /usr/local/include/display_driver.h
 
 ## 🎯 Como Começar
 
-### Iniciante? Comece com:
-1. **C++**: `finger` - Menu simples
-2. **Java**: `FingerDemo` - GUI visual
-
-### Avançado? Explore:
+### Comece com:
 1. **C++**: `finger2_v2.cpp` - Código bem estruturado
 2. **Java**: `FingerDemo2.java` - API de alto nível
 
@@ -161,7 +157,7 @@ ls -l /usr/local/include/display_driver.h
 
 - 🔴 **Requer sudo** - Acesso direto ao hardware
 - 🔴 **Exclusivo** - Apenas uma instância por vez
-- 🔴 **Hardware** - TEC44FST conectado obrigatório
+- 🔴 **Hardware** - TEC44AVT conectado obrigatório
 - 💡 **Dica** - Use os exemplos como base para seus próprios programas
 
 ## 🐛 Troubleshooting
