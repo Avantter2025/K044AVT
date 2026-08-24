@@ -1,0 +1,111 @@
+LICENSE AGREEMENT FOR K044AVT - PROPRIETARY SOFTWARE
+
+Copyright © 2026 Avanttec Tecnologia. All rights reserved.
+
+DEFINITIONS
+
+"Software" means the libK044AVT library, associated applications, examples,
+documentation, and any modifications or derivatives thereof.
+
+"Hardware" means the TEC44FST keyboard and related peripheral devices sold
+or licensed by Avanttec Tecnologia.
+
+"You" or "Licensee" means any individual or entity that obtains a copy of
+this Software.
+
+
+LIMITED LICENSE GRANT
+
+Avanttec Tecnologia grants You a limited, non-exclusive, non-transferable,
+revocable license to use the Software solely for the purpose of:
+
+  1. Operating, integrating, or developing applications for the Hardware
+     that You have acquired from or through Avanttec Tecnologia.
+
+  2. Evaluating or testing the Software for compatibility with the Hardware
+     for which a license is requested.
+
+This license is provided only for use with genuine Avanttec Tecnologia
+Hardware products.
+
+
+RESTRICTIONS
+
+You may NOT:
+
+  • Redistribute, copy, or transfer the Software (source code or binary form)
+    to any third party, except as part of a complete Hardware system sold
+    by You where You have obtained prior written authorization from
+    Avanttec Tecnologia.
+
+  • Sublicense, reverse engineer, decompile, disassemble, modify, or create
+    derivative works of the Software.
+
+  • Use the Software with non-Avanttec Hardware products or for purposes
+    unrelated to the Hardware.
+
+  • Use the Software for commercial purposes, including selling services or
+    products based on the Software, unless You have obtained a commercial
+    license from Avanttec Tecnologia in writing.
+
+  • Remove or alter any proprietary notices, labels, or marks contained in
+    the Software.
+
+  • Rent, lease, or lend the Software to others.
+
+
+INTELLECTUAL PROPERTY RIGHTS
+
+All intellectual property rights in the Software, including but not limited
+to patents, copyrights, trade secrets, and trademarks, are owned by
+Avanttec Tecnologia or its licensors. You acquire no ownership rights to
+the Software.
+
+
+DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+AVANTTEC TECNOLOGIA BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF,
+OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+TERMINATION
+
+This license is effective until terminated. Your rights under this license
+terminate automatically without notice if You breach any term of this
+Agreement. Upon termination, You must destroy all copies of the Software
+and certify such destruction in writing.
+
+
+GOVERNING LAW
+
+This License Agreement is governed by and construed in accordance with the
+laws of Brazil, without regard to its conflict of laws principles.
+
+
+ADDITIONAL LICENSING
+
+For commercial licensing, redistribution rights, modifications, or other
+uses not permitted herein, please contact:
+
+  Avanttec Tecnologia
+  License Inquiries: [contact@avanttec.com]
+
+  (Replace [contact@avanttec.com] with appropriate contact information)
+
+
+ENTIRE AGREEMENT
+
+This is the entire and exclusive agreement between Avanttec Tecnologia and
+You regarding the Software, and supersedes any prior or contemporaneous
+negotiations, representations, or agreements, written or oral, regarding
+the Software.
+
+---
+
+Version 1.0
+Last Updated: August 24, 2026

@@ -87,7 +87,8 @@ sudo ldconfig
 
 ## 📝 Licença
 
-Veja o arquivo LICENSE no repositório principal.
+Software proprietário. Uso restrito ao hardware TEC44FST da Avanttec Tecnologia.
+Veja o arquivo [LICENSE](../LICENSE) para os termos completos.
 
 ## 🐛 Suporte
 

@@ -216,7 +216,8 @@ dmesg | tail
 
 ## 📄 Licença
 
-[Informações de licença a serem adicionadas]
+Software proprietário. Uso restrito ao hardware TEC44FST da Avanttec Tecnologia.
+Veja o arquivo [LICENSE](LICENSE) para os termos completos.
 
 ## 🔗 Links Úteis
 
