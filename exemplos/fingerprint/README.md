@@ -184,7 +184,7 @@ Para criar seu próprio programa baseado nesses exemplos:
 
 ### C++
 ```bash
-cp finger.cpp meu_programa.cpp
+cp finger2_V2.cpp meu_programa.cpp
 # Edite e compile
 g++ -o meu_programa meu_programa.cpp -lK044AVT
 sudo ./meu_programa
