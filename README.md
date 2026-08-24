@@ -63,15 +63,14 @@ cd ../displaylc/cpp && make && sudo ./lcd
 ## ✨ Funcionalidades Disponíveis
 
 | Módulo                 | Descrição                      | Status        |
-|------------------------|--------------------------------|---------------|
-| **Teclado 44 teclas**  | Programável via EEPROM         | ✅ Funcional  |
-| **Leitor Fingerprint** | AS608 - Enroll, Search, Delete | ✅ Funcional  |
-| **Display LCD**        | HD44780 2×40 caracteres        | ✅ Funcional  |
-| **EEPROM**             | Armazenamento programável      | ✅ Funcional  |
-| **Teclado Auxiliar**   | PS/2 externo                   | ✅ Funcional  |
-| **LEDs de Status**     | Controle de indicadores        | ✅ Funcional  |
-| **PIN Pad**            | Teclado numérico               | 🔄 USO FUTURO |
-| **Leitor Magnético**   | ANSI/ISO                       | 🔄 USO FUTURO |
+|------------------------|---------------------------|---------------|
+| **Teclado 44 teclas**  | Programável via PS2       | ✅ Funcional  |
+| **Leitor Fingerprint** | Enroll, Search, Delete    | ✅ Funcional  |
+| **Display LCD**        | HD44780 2×40 caracteres   | ✅ Funcional  |
+| **Teclado Auxiliar**   | PS/2 externo              | ✅ Funcional  |
+| **LEDs de Status**     | Controle de indicadores   | ✅ Funcional  |
+| **PIN Pad**            | Teclado numérico          | 🔄 USO FUTURO |
+| **Leitor Magnético**   | ANSI/ISO                  | 🔄 USO FUTURO |
 
 ## 📚 Documentação Completa
 
