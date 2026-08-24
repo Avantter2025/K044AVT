@@ -67,9 +67,7 @@ A biblioteca expõe as seguintes APIs:
 - **Teclado**: leitura de scancodes, evento loop
 - **Fingerprint**: enroll, search, delete, contagem de templates
 - **Display LCD**: controle de um display 2×40
-- **EEPROM**: leitura/escrita de tabelas de scancodes
 - **LEDs**: controle de LED de status
-- **Mouse auxiliar**: suporte a teclado PS/2 externo
 
 ## 🔧 Desinstalação
 
