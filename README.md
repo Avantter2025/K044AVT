@@ -1,96 +1,231 @@
-# K044AVT - Teclado Programável
+# K044AVT - Teclado Programável TEC44FST
 
-Repositório com a biblioteca nativa `libK044AVT.so` compilada e arquivos de instalação para o teclado programável TEC44AVT com funcionalidades avançadas.
+**Repositório completo** com biblioteca nativa compilada, aplicativos e exemplos práticos para o teclado programável **TEC44FST** com funcionalidades avançadas (biometria, display LCD, 44 teclas programáveis).
 
-## 📦 Conteúdo
+## 📦 Conteúdo do Repositório
 
-Este repositório contém:
-
-- **`libk044avt/`** - Pasta com a biblioteca nativa compilada e headers
-  - `lib/libK044AVT.so` - Biblioteca compartilhada
-  - `include/display_driver.h` - Headers da biblioteca
-  - `install.sh` - Script de instalação automática
-  - `README.md` - Documentação de instalação e uso
+```
+K044AVT/
+├── libk044avt/              Biblioteca nativa compilada + instalação
+│   ├── lib/libK044AVT.so
+│   ├── include/display_driver.h
+│   ├── install.sh
+│   └── README.md
+│
+├── reprog/                  Aplicativo Java para reprogramação de scancodes
+│   ├── app/k044-reprog-demo-1.0.0.jar
+│   ├── bin/k044-reprog      (launcher)
+│   ├── config/k044-reprog-demo.desktop
+│   ├── install.sh
+│   └── README.md
+│
+└── exemplos/                Exemplos práticos em C/C++ e Java
+    ├── fingerprint/         Leitor de impressão digital (AS608)
+    │   ├── cpp/            (finger, finger2, finger2_v2)
+    │   ├── java/           (GUI Swing)
+    │   └── README.md
+    │
+    └── displaylc/          Display LCD (HD44780 2×40)
+        ├── cpp/            (vários testes)
+        ├── java/           (GUI)
+        └── README.md
+```
 
 ## 🚀 Instalação Rápida
 
+### 1. Instalar Biblioteca
+
 ```bash
-# Clonar repositório
 git clone https://github.com/Avantter2025/K044AVT.git
 cd K044AVT/libk044avt
-
-# Instalar
 sudo bash install.sh
 ```
 
-## ✨ Funcionalidades
+### 2. (Opcional) Instalar Aplicativo Reprog
 
-A biblioteca libK044AVT oferece acesso a:
+```bash
+cd ../reprog
+bash install.sh
+```
 
-- **Teclado de 44 teclas** - Programável via EEPROM
-- **Leitor de Impressão Digital** - Módulo AS608 integrado
-- **Display LCD** - 2 linhas × 40 caracteres (HD44780)
-- **PIN Pad** - Teclado numérico integrado (USO FUTURO)
-- **Leitor de Cartão Magnético** - ANSI/ISO suportado (USO FUTURO)
-- **EEPROM** - Armazenamento programável
-- **Teclado Auxiliar** - Suporte a PS/2 externo
-- **LEDs de Status** - Controle de indicadores (USO FUTURO)
+### 3. Explorar Exemplos
 
-## 📚 Documentação
+```bash
+cd ../exemplos
 
-- [Instruções de Instalação](libk044avt/README.md)
-- Documentação de API: Ver `display_driver.h`
-- Exemplos de código: Ver repositório principal do projeto
+# Fingerprint
+cd fingerprint/cpp && make && sudo ./finger2_v2
 
-## 🛠️ Requisitos de Sistema
+# Ou Display LCD
+cd ../displaylc/cpp && make && sudo ./lcd
+```
 
-- **OS**: Linux (Ubuntu/Debian recomendado)
+## ✨ Funcionalidades Disponíveis
+
+| Módulo | Descrição | Status |
+|--------|-----------|--------|
+| **Teclado 44 teclas** | Programável via EEPROM | ✅ Funcional |
+| **Leitor Fingerprint** | AS608 - Enroll, Search, Delete | ✅ Funcional |
+| **Display LCD** | HD44780 2×40 caracteres | ✅ Funcional |
+| **EEPROM** | Armazenamento programável | ✅ Funcional |
+| **Teclado Auxiliar** | PS/2 externo | ✅ Funcional |
+| **LEDs de Status** | Controle de indicadores | ✅ Funcional |
+| **PIN Pad** | Teclado numérico | 🔄 USO FUTURO |
+| **Leitor Magnético** | ANSI/ISO | 🔄 USO FUTURO |
+
+## 📚 Documentação Completa
+
+| Componente | Documentação |
+|-----------|-----------|
+| **Biblioteca** | [libk044avt/README.md](libk044avt/README.md) - Instalação e API |
+| **Aplicativo Reprog** | [reprog/README.md](reprog/README.md) - Reprogramação de scancodes |
+| **Exemplos** | [exemplos/README.md](exemplos/README.md) - Guia completo |
+| **Fingerprint** | [exemplos/fingerprint/README.md](exemplos/fingerprint/README.md) - Leitor biométrico |
+| **Display LCD** | [exemplos/displaylc/README.md](exemplos/displaylc/README.md) - Controle de display |
+
+## 🛠️ Pré-requisitos
+
+### Sistema Operacional
+- **OS**: Linux (Ubuntu 18.04+ / Debian 10+)
 - **Arquitetura**: x86_64
-- **Dependências**: 
-  - `libc6`
-  - GCC/Clang (para compilar programas que usam a biblioteca)
+- **Hardware**: TEC44FST conectado na porta PS/2 roxa
 
-## 📖 Como Usar
-
-### Com C/C++
+### Dependências
 
 ```bash
-gcc -o programa programa.c -lK044AVT
-sudo ./programa
+# Build essentials
+sudo apt-get install -y build-essential
+
+# Java (para exemplos Java)
+sudo apt-get install -y default-jdk maven
+
+# Verificar instalações
+gcc --version
+java -version
+mvn --version
 ```
 
-### Com Java (JNA)
+## 🚀 Como Começar
+
+### Começante? Siga este caminho:
 
 ```bash
-java -Djna.library.path=/usr/local/lib -cp lib.jar com.exemplo.MeuApp
+# 1. Clonar e instalar biblioteca
+git clone https://github.com/Avantter2025/K044AVT.git
+cd K044AVT
+sudo libk044avt/install.sh
+
+# 2. Rodar primeiro exemplo (Fingerprint)
+cd exemplos/fingerprint/java
+mvn clean package
+sudo java -Djna.library.path=../../../libk044avt/lib -jar target/k044-fingerprint-demo-1.0.0.jar
+
+# 3. Ou experimentar Display LCD
+cd ../displaylc/java
+mvn clean package
+sudo java -Djna.library.path=../../../libk044avt/lib -jar target/k044-displaylc-demo-1.0.0.jar
 ```
 
-### Com Python (ctypes)
+### Desenvolvedor? Escolha sua linguagem:
 
-```python
-import ctypes
-lib = ctypes.CDLL('/usr/local/lib/libK044AVT.so')
+**C/C++** - Mais performance, mais controle
+```bash
+cd exemplos/fingerprint/cpp
+make
+sudo ./finger2_v2
+```
+
+**Java** - Mais produtivo, multi-plataforma
+```bash
+cd exemplos/fingerprint/java
+mvn clean package
+sudo java -Djna.library.path=/usr/local/lib -jar target/k044-fingerprint-demo-1.0.0.jar
+```
+
+## 📖 Casos de Uso
+
+| Caso | Solução | Documentação |
+|------|---------|-----------|
+| Compilar programa em C/C++ | Usar libK044AVT.so + headers | [libk044avt/README.md](libk044avt/README.md) |
+| Reprogramar scancodes do teclado | Usar aplicativo Reprog | [reprog/README.md](reprog/README.md) |
+| Aprender sobre Fingerprint | Rodar exemplos | [exemplos/fingerprint/README.md](exemplos/fingerprint/README.md) |
+| Testar Display LCD | Rodar exemplos | [exemplos/displaylc/README.md](exemplos/displaylc/README.md) |
+| Integrar em seu projeto | Copiar exemplos como base | Ver pasta `exemplos/` |
+
+## 🎯 Roadmap de Uso
+
+```
+┌─────────────┐
+│  Instalar   │  sudo libk044avt/install.sh
+│  Biblioteca │
+└──────┬──────┘
+       │
+       ├─→ [Só compilar programas?]
+       │   └─→ Use a biblioteca no seu código
+       │
+       ├─→ [Reprogramar teclado?]
+       │   └─→ bash reprog/install.sh
+       │
+       └─→ [Aprender API?]
+           └─→ cd exemplos/ → Escolher módulo → make/mvn package
 ```
 
 ## ⚠️ Notas Importantes
 
 - ⚡ **Requer root** - Acesso direto ao hardware PS/2
-- 🔒 **Exclusividade** - Apenas uma instância pode acessar o dispositivo
-- 📌 **Hardware específico** - Requer TEC44AVT conectado
+- 🔒 **Exclusividade** - Apenas UMA instância por vez
+- 📌 **Hardware específico** - Requer TEC44FST conectado
+- 💡 **Porta correta** - Sempre usar porta PS/2 **roxa** (não verde/mouse)
 
-## 🤝 Contribuições
+## 🐛 Troubleshooting Rápido
 
-Este repositório contém apenas a biblioteca compilada e arquivos de instalação. Para contribuições ao código-fonte, consulte o repositório principal do projeto.
+### "libK044AVT.so not found"
+```bash
+sudo libk044avt/install.sh
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+```
+
+### "Teclado não responde"
+```bash
+# Verificar conexão
+dmesg | tail
+
+# Reiniciar aplicação
+# Desconectar/reconectar teclado
+```
+
+### "Port already in use"
+- Fechar aplicação anterior (`Ctrl+C`)
+- Aguardar 2-3 segundos
+- Tentar novamente
+
+## 📊 Estrutura de Pastas Explicada
+
+| Pasta | Conteúdo | Use quando... |
+|-------|----------|----------|
+| `libk044avt/` | Biblioteca + instalação | Instalar ou compilar programas |
+| `reprog/` | App reprogramação | Alterar scancodes do teclado |
+| `exemplos/fingerprint/` | Exemplos de biometria | Aprender/testar fingerprint |
+| `exemplos/displaylc/` | Exemplos de display | Aprender/testar LCD |
+
+## 🤝 Contribuições & Suporte
+
+- **Bug Report**: [Issues no GitHub](https://github.com/Avantter2025/K044AVT/issues)
+- **Sugestões**: Abra uma issue com o prefixo `[FEATURE]`
+- **Código**: Consulte o repositório principal do projeto
 
 ## 📄 Licença
 
-[Ver LICENSE no repositório]
+[Informações de licença a serem adicionadas]
 
-## 🔗 Links
+## 🔗 Links Úteis
 
-- **Repositório Principal**: [Avanttec Project](https://github.com/Avantter2025/...)
-- **Issues**: https://github.com/Avantter2025/K044AVT/issues
+- **Repositório Principal**: [Avanttec Project](https://github.com/Avantter2025)
+- **Issues e Discussões**: [GitHub Issues](https://github.com/Avantter2025/K044AVT/issues)
+- **Hardware**: TEC44FST - Teclado Programável com Biometria
 
 ---
 
-**Última atualização**: 2026-08-24
+**Última atualização**: 2026-08-24  
+**Versão**: 1.0  
+**Status**: ✅ Pronto para Produção
