@@ -1,21 +1,6 @@
 /**
  * finger2_v2.cpp — "Revisão 2" de finger2.cpp: mesmo menu/comportamento,
  * mas cadastrar/identificar/buscar usam as novas funções de alto nível
- * k044_fp_enroll()/k044_fp_search_retry() (driver_display/display_driver.h)
- * em vez de reimplementar o fluxo multi-passo (esperar dedo, capturar,
- * retirar dedo, capturar de novo, mesclar, gravar) aqui no exemplo.
- *
- * finger2.cpp (o original) permanece intocado — este arquivo existe em
- * paralelo, para não arriscar regressão no exemplo já validado, e para
- * demonstrar/testar a nova API de alto nível isoladamente. Compare
- * op_enroll()/op_identify()/op_search() aqui com os equivalentes em
- * finger2.cpp: a lógica de espera/retentativa saiu do exemplo e foi
- * embutida na biblioteca (agora reaproveitável por qualquer binding —
- * C, C++, Java, Python — sem duplicar o state machine em cada um).
- *
- * Todo o resto (setup de teclado/mouse/aux, diagnóstico, demais
- * operações) é idêntico a finger2.cpp — ver os comentários lá para o
- * histórico completo de por que cada coisa é como é.
  *
  * Compilar: make
  * Executar: sudo ./finger2_v2
@@ -29,7 +14,7 @@
 #include <cstdint>
 
 /* ------------------------------------------------------------------------- */
-/* Utilitários de entrada e diagnóstico (idênticos a finger2.cpp)            */
+/* Utilitários de entrada e diagnóstico                                      */
 /* ------------------------------------------------------------------------- */
 
 static int read_line(char *buf, size_t len)
@@ -83,10 +68,7 @@ static void diag_status(void)
 }
 
 /* ------------------------------------------------------------------------- */
-/* Callback de progresso — agora precisa entender os novos K044_FP_STEP_*   */
-/* relatados por k044_fp_enroll()/k044_fp_search_retry(), além dos steps    */
-/* numéricos crus do AutoEnroll (não usados por este exemplo, mas o         */
-/* callback é o mesmo ponto de registro para os dois).                      */
+/* Callback de progresso —       precisa entender os novos K044_FP_STEP_*    */
 /* ------------------------------------------------------------------------- */
 
 static void fp_progress(int status, int step, void *userdata)
@@ -156,8 +138,7 @@ static void op_count(void)
 
 /* Cadastro em 3 leituras — todo o fluxo (esperar/capturar/retirar/mesclar/
  * gravar) agora mora em k044_fp_enroll() (driver_display/display_driver.c);
- * aqui só chamamos e reportamos o resultado. Compare com op_enroll() em
- * finger2.cpp, que reimplementa o mesmo fluxo linha a linha. */
+ * aqui só chamamos e reportamos o resultado. */
 static void op_enroll(void)
 {
     int id = prompt_int("ID para cadastrar (1-999)", 1);
@@ -170,9 +151,7 @@ static void op_enroll(void)
         printf("  Cadastro falhou (%d).\n", r);
 }
 
-/* Identificação = busca de tentativa única (max_attempts=1), mesma
- * simplificação já usada em finger2.cpp (o Search base do AS608 não
- * aceita threshold de score — o módulo usa seu próprio nível interno). */
+/* Identificação = busca de tentativa única . */
 static void op_identify(void)
 {
     printf("  Coloque o dedo no sensor para identificar...\n");
@@ -186,7 +165,7 @@ static void op_identify(void)
 }
 
 /* Busca com até 3 tentativas de captura+busca — fluxo completo agora em
- * k044_fp_search_retry(). Compare com op_search() em finger2.cpp. */
+ * k044_fp_search_retry(). */
 static void op_search(void)
 {
     printf("  Coloque o dedo no sensor para buscar no banco (até 3 tentativas)...\n");
