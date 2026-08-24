@@ -1,8 +1,8 @@
 # Exemplo Java (Swing + JNA) — Módulo de Impressão Digital
 
-GUI de demonstração do módulo de digital do dispositivo Avanttec (TEC44FST),
+GUI de demonstração do módulo de digital do dispositivo Avanttec (TEC44AVT),
 falando com o sensor **através do driver** `libK044AVT.so` (JNA) — o firmware do
-AT89S52 faz o passthrough PS/2 `0xAD`/`0xAE` ⇄ UART do módulo, então o lado Java
+TEC44AVT faz o passthrough PS/2 `0xAD`/`0xAE` ⇄ UART do módulo, então o lado Java
 só usa as rotinas `k044_fp_*`.
 
 Durante cada leitura (cadastro/identificação/busca), o painel exibe uma
@@ -109,8 +109,4 @@ Na janela:
 
 ## Referência do protocolo
 
-O protocolo bruto do sensor está documentado no PDF em `../reference/` e
-reimplementado em `driver_display/display_driver.c`; o código Borland original
-(Windows/serial) que deu origem a este exemplo está preservado em
-`../reference/finger_vcl_reference.cpp`. O exemplo CLI equivalente em C++ está em
-`../cpp/finger.cpp`.
+O protocolo bruto do sensor está DEVIDAMENTE documentado.
