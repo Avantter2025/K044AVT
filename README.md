@@ -20,7 +20,7 @@ K044AVT/
 │   └── README.md
 │
 └── exemplos/                Exemplos práticos em C/C++ e Java
-    ├── fingerprint/         Leitor de impressão digital (AS608)
+    ├── fingerprint/         Leitor de impressão digital
     │   ├── cpp/            (finger2_v2)
     │   ├── java/           (GUI Swing)
     │   └── README.md
