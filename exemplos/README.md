@@ -28,7 +28,7 @@ exemplos/
    sudo apt-get install -y build-essential default-jdk
    ```
 
-3. **Teclado TEC44FST conectado** na porta PS/2
+3. **Teclado TEC44AVT conectado** na porta PS/2
 
 ## 📚 Exemplos Disponíveis
 
@@ -77,7 +77,7 @@ Consulte o README específico de cada exemplo:
 
 - ⚡ **Requer root** - Todos os exemplos precisam de `sudo` para acessar o hardware
 - 🔒 **Exclusividade** - Apenas uma instância pode acessar o dispositivo por vez
-- 📌 **Hardware específico** - Requer TEC44FST conectado
+- 📌 **Hardware específico** - Requer TEC44AVT conectado
 
 ## 🐛 Troubleshooting
 
