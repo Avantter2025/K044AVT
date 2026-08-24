@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=K044AVT Reprog Scancodes
+Comment=Reprogramação de scancodes do teclado TEC44FST (44 teclas)
+Exec=pkexec /home/paulo/Projetos/projetos-ubuntu/avanttec_project/exemplos/reprog/java/run-reprog.sh
+Icon=/home/paulo/Projetos/projetos-ubuntu/avanttec_project/exemplos/image/avanttec.png
+Terminal=false
+Categories=Development;Utility;
+StartupNotify=true
