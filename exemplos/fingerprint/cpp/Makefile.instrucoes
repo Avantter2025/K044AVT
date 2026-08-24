@@ -1,0 +1,95 @@
+# Instruções para compilação dos exemplos C++ de Fingerprint
+
+## Pré-requisitos
+- g++ (GCC 7+)
+- libK044AVT instalada em /usr/local/lib/
+- Headers em /usr/local/include/
+
+## Compilação Rápida
+
+    cd cpp
+    make              # Compila todos os programas
+    make clean        # Remove binários e objetos
+
+## Programas Disponíveis
+
+### finger
+    Menu interativo de linha de comando
+
+    Uso: sudo ./finger
+
+    Operações:
+    - 1: Info - Informações do módulo
+    - 2: Count - Contar templates
+    - 3: Enroll - Cadastrar impressão digital
+    - 4: Identify - Identificar impressão
+    - 5: Search - Buscar template
+    - 6: Delete - Deletar template
+    - 7: Empty - Limpar todos os templates
+    - 8: Sleep - Modo sleep
+
+### finger2
+    Versão com event loop + uinput
+
+    Uso: sudo ./finger2
+
+    Features:
+    - Teclado do sistema lendo simultaneamente
+    - Teclado auxiliar (PS/2 externo) ativo
+    - Interface de menu mais responsiva
+
+### finger2_v2
+    Versão 2.1 usando API de alto nível
+
+    Uso: sudo ./finger2_v2
+
+    Melhorias:
+    - Usa k044_fp_enroll() / k044_fp_search_retry()
+    - Código mais limpo e manutenível
+    - Mesma interface que finger2
+
+### fp_diag
+    Ferramenta de diagnóstico do fingerprint
+
+    Uso: sudo ./fp_diag
+
+    Função:
+    - Testa conectividade do módulo
+    - Verifica informações técnicas
+    - Útil para troubleshooting
+
+## Compilação Manual
+
+    # Compilar um arquivo específico
+    g++ -o finger finger.cpp -lK044AVT
+
+    # Com flags de debug
+    g++ -g -o finger finger.cpp -lK044AVT
+
+    # Com otimizações
+    g++ -O2 -o finger finger.cpp -lK044AVT
+
+## Variáveis de Ambiente
+
+    # Adicione ao .bashrc ou .zshrc se necessário
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+    export CPLUS_INCLUDE_PATH=/usr/local/include:$CPLUS_INCLUDE_PATH
+
+## Troubleshooting
+
+### "undefined reference to `k044_open'"
+    - Verifique: ls -l /usr/local/lib/libK044AVT.so
+    - Reinstale: sudo /path/to/libk044avt/install.sh
+    - Execute: sudo ldconfig
+
+### "display_driver.h: No such file"
+    - Verifique: ls -l /usr/local/include/display_driver.h
+    - Reinstale a biblioteca
+
+### "Permission denied"
+    - Sempre use: sudo ./programa
+    - Esses programas precisam acessar o hardware (PS/2)
+
+## Mais Informações
+
+    Consulte README.md para documentação completa
