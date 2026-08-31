@@ -2,6 +2,9 @@
 
 **Repositório completo** com biblioteca nativa compilada, aplicativos e exemplos práticos para o teclado programável **TEC44AVT** com funcionalidades avançadas (biometria, display LCD, 44 teclas programáveis).
 
+O que é a Biblioteca libK044AVT.so
+https://avantter2025.github.io/K044AVT/docs/guia_rapido_dev.html
+
 ## 📦 Conteúdo do Repositório
 
 ```
