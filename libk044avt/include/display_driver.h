@@ -49,26 +49,26 @@ extern "C" {
 #define K044_ERR_RESEND  -7   /**< Dispositivo solicitou retransmissão       */
 
 /* =========================================================================
- * Códigos de controle LCD (mapeados de DISP40.INC)
+ * Códigos de controle LCD
  * Enviados via k044_write_char() ou k044_write_buf()
  * ========================================================================= */
 
-#define K044_BEL       0x07  /**< Bell (sem efeito neste hardware)           */
-#define K044_BS        0x08  /**< Backspace — cursor uma posição à esquerda  */
-#define K044_TAB       0x09  /**< Tab — avança cursor (alias de K044_CURSOR_INC) */
+#define K044_BEL         0x07  /**< Bell (sem efeito neste hardware)           */
+#define K044_BS          0x08  /**< Backspace — cursor uma posição à esquerda  */
+#define K044_TAB         0x09  /**< Tab — avança cursor (alias de K044_CURSOR_INC) */
 #define K044_CURSOR_INC  0x09  /**< Avança cursor uma posição (sem apagar)    */
 #define K044_CURSOR_DEC  0x12  /**< Recua cursor uma posição (sem apagar)      */
-#define K044_LF        0x0A  /**< Line Feed — move para linha 2              */
-#define K044_VT        0x0B  /**< Cursor Up — move para linha 1              */
-#define K044_FF        0x0C  /**< Form Feed — limpa display inteiro          */
-#define K044_CR        0x0D  /**< Carriage Return — cursor para coluna 0     */
-#define K044_CURSON    0x11  /**< Cursor On — ativa exibição do cursor       */
-#define K044_CURSOFF   0x14  /**< Cursor Off — oculta cursor                 */
-#define K044_ERASE_EOL 0x18  /**< Erase to EOL — apaga até fim da linha      */
-#define K044_HOME      0x1E  /**< Home — cursor para posição (0,0)           */
-#define K044_SETPOS    0x1F  /**< Set Position — sequência de 3 bytes:       */
-                             /**< 0x1F + row_enc + col_enc                   */
-                             /**< Use k044_set_cursor() para codificação     */
+#define K044_LF          0x0A  /**< Line Feed — move para linha 2              */
+#define K044_VT          0x0B  /**< Cursor Up — move para linha 1              */
+#define K044_FF          0x0C  /**< Form Feed — limpa display inteiro          */
+#define K044_CR          0x0D  /**< Carriage Return — cursor para coluna 0     */
+#define K044_CURSON      0x11  /**< Cursor On — ativa exibição do cursor       */
+#define K044_CURSOFF     0x14  /**< Cursor Off — oculta cursor                 */
+#define K044_ERASE_EOL   0x18  /**< Erase to EOL — apaga até fim da linha      */
+#define K044_HOME        0x1E  /**< Home — cursor para posição (0,0)           */
+#define K044_SETPOS      0x1F  /**< Set Position — sequência de 3 bytes:       */
+                               /**< 0x1F + row_enc + col_enc                   */
+                               /**< Use k044_set_cursor() para codificação     */
 
 /* =========================================================================
  * Bitmasks de LEDs (comando 0xED)
@@ -131,9 +131,6 @@ void k044_config_init(k044_config_t *cfg);
 void k044_set_log_level(int level);
 
 /**
- * Registra callback personalizado para receber mensagens de log.
- * Se NULL, mensagens de erro são enviadas para stderr.
- *
  * @param cb  Função: void cb(int level, const char *file, int line,
  *                            const char *msg)
  */
@@ -149,9 +146,6 @@ typedef void    (*k044_outb_fn_t)(uint8_t val, uint16_t port);
 
 /**
  * Injeta funções alternativas de leitura/escrita de porta.
- * Use NULL para restaurar o comportamento real (ioperm/inb/outb).
- * Deve ser chamado ANTES de k044_open() ou k044_open_ex().
- *
  * @param inb_fn   Função de leitura de porta (NULL = usa inb real)
  * @param outb_fn  Função de escrita de porta  (NULL = usa outb real)
  */
@@ -163,17 +157,12 @@ void k044_set_io_hooks(k044_inb_fn_t inb_fn, k044_outb_fn_t outb_fn);
 
 /**
  * Inicializa acesso ao dispositivo com configuração padrão.
- * Equivalente a k044_open_ex(defaults).
- * Chama ioperm(0x60, 5, 1) — requer CAP_SYS_RAWIO.
- * Verifica presença do dispositivo via READ_ID (0xF2).
- *
  * @return K044_OK em sucesso, código de erro negativo em falha.
  */
 int k044_open(void);
 
 /**
  * Inicializa acesso com configuração personalizada.
- *
  * @param cfg  Ponteiro para k044_config_t preenchida. NULL usa defaults.
  * @return K044_OK em sucesso, código de erro negativo em falha.
  */
@@ -181,7 +170,6 @@ int k044_open_ex(const k044_config_t *cfg);
 
 /**
  * Libera acesso ao dispositivo. Para event loop se ativo.
- * Chama ioperm(0x60, 5, 0).
  */
 void k044_close(void);
 
@@ -238,9 +226,6 @@ int k044_firmware_version(char *buf, size_t len);
 int k044_read_fw_ver(uint8_t *major, uint8_t *minor, uint8_t *patch);
 
 /**
- * Retorna string formatada da versão do firmware.
- * Ex.: "1.0.0". Requer k044_read_fw_ver() bem-sucedido primeiro.
- *
  * @param buf  Buffer de destino (mínimo 12 bytes).
  * @param len  Tamanho do buffer.
  * @return K044_OK em sucesso.
@@ -248,9 +233,6 @@ int k044_read_fw_ver(uint8_t *major, uint8_t *minor, uint8_t *patch);
 int k044_fw_ver_str(char *buf, size_t len);
 
 /**
- * Lê número de série do equipamento via comando 0xB6.
- * Firmware compatível retorna 7 bytes ASCII fixos (ex.: "LV00002").
- *
  * @param buf  Buffer de destino (mínimo 8 bytes).
  * @param len  Tamanho do buffer.
  * @return K044_OK em sucesso, K044_ERR_NODEV se firmware não suporta 0xB6.
@@ -262,10 +244,6 @@ int k044_read_serial(char *buf, size_t len);
  * ========================================================================= */
 
 /**
- * Programa um caractere customizado na CGRAM do HD44780.
- * A CGRAM tem 64 bytes (8 caracteres de 5x8 pixels).
- * Cada caractere e definido por 8 bytes (8 linhas × 5 bits cada).
- *
  * @param addr  Endereco CGRAM (0-63) ou numero do char (0-7, auto×8).
  * @param data  8 bytes do padrao do caractere (bits 0-4 usados).
  * @return K044_OK em sucesso.
@@ -283,11 +261,6 @@ int k044_write_cgram(uint8_t addr, const uint8_t data[8]);
 #define K044_CGRAM_PRESET_BATTERY_FULL   9
 
 /**
- * Grava um dos padrões pré-definidos (ver K044_CGRAM_PRESET_*) num
- * slot da CGRAM (0-7) SEM transmitir os 8 bytes do desenho pelo canal
- * PS/2 — o firmware já tem os padrões gravados em ROM. Preferir esta
- * função a k044_write_cgram() para os padrões fixos.
- *
  * @param pattern  Um dos K044_CGRAM_PRESET_*.
  * @param slot     Slot da CGRAM a usar (0-7).
  * @return K044_OK em sucesso.
@@ -295,50 +268,30 @@ int k044_write_cgram(uint8_t addr, const uint8_t data[8]);
 int k044_write_cgram_preset(uint8_t pattern, uint8_t slot);
 
 /**
- * Lê o conteúdo inteiro da CGRAM do HD44780 (64 bytes, 8 caracteres de
- * 8 bytes cada, endereços 0-63) — contraparte de leitura de
- * k044_write_cgram().
- *
  * @param out  Buffer de 64 bytes de destino.
  * @return K044_OK em sucesso.
  */
 int k044_read_cgram(uint8_t out[64]);
 
 /**
- * Escreve um único byte no display na posição atual do cursor.
- * Caracteres 0x20-0x7F sao exibidos diretamente.
- * Bytes de controle (K044_BS, K044_CR, etc.) executam a acao correspondente.
- *
  * @param c  Byte a enviar (via comando 0xA0 INSTDPY).
  * @return K044_OK em sucesso.
  */
 int k044_write_char(uint8_t c);
 
 /**
- * Escreve 1 byte diretamente na DDRAM (posição atual do cursor), sem
- * interpretar códigos de controle — diferente de k044_write_char(), que
- * trata bytes < 0x20 como comandos (backspace, bell, etc.). Usar esta
- * função para mostrar caracteres customizados definidos via
- * k044_write_cgram().
- *
  * @param c  Byte a escrever (0-255, sem restrição de faixa).
  * @return K044_OK em sucesso.
  */
 int k044_write_char_raw(uint8_t c);
 
 /**
- * Escreve string terminada em '\0' no display.
- * Máximo 80 caracteres (duas linhas completas).
- * Usa comando 0xA1/0xA2 (BLKDISP) — mais eficiente que write_char repetido.
- *
  * @param s  String a escrever (não NULL).
  * @return K044_OK em sucesso.
  */
 int k044_write_string(const char *s);
 
 /**
- * Escreve buffer de bytes no display.
- *
  * @param buf  Ponteiro para os bytes.
  * @param len  Número de bytes.
  * @return K044_OK em sucesso.
@@ -350,9 +303,6 @@ int k044_write_buf(const uint8_t *buf, size_t len);
  * ========================================================================= */
 
 /**
- * Escreve texto em uma linha inteira, completando com espaços até col 39.
- * Posiciona cursor em (row, 0) antes de escrever.
- *
  * @param row   Linha: 0 ou 1.
  * @param text  Texto (truncado em 39 chars se maior).
  * @return K044_OK em sucesso.
@@ -360,21 +310,12 @@ int k044_write_buf(const uint8_t *buf, size_t len);
 int k044_write_line(uint8_t row, const char *text);
 
 /**
- * Desloca o display inteiro usando a instrução nativa
- * "Cursor or Display Shift"  — move todo o conteúdo presente na DDRAM sem
- * precisar retransmitir nenhum caractere (bem mais leve que reescrever a
- * linha via k044_write_line()). Não altera o conteúdo da DDRAM em si, só
- * a janela visível — quem chama é responsável por escrever o caractere
- * que deve aparecer na borda antes/depois do shift (ver k044_scroll_*()).
- *
  * @param direction 0 = desloca para a esquerda, diferente de 0 = direita.
  * @return K044_OK em sucesso.
  */
 int k044_display_shift(int direction);
 
 /**
- * Limpa display e escreve nas duas linhas de uma vez.
- *
  * @param line1  Texto para linha 0 (NULL = linha vazia).
  * @param line2  Texto para linha 1 (NULL = linha vazia).
  * @return K044_OK em sucesso.
@@ -382,10 +323,6 @@ int k044_display_shift(int direction);
 int k044_write_display(const char *line1, const char *line2);
 
 /**
- * Formata e escreve string estilo printf numa posição do display.
- * Posiciona cursor em (row, col) antes de escrever.
- * Texto formatado é truncado para caber até a coluna 39 (40 - col chars).
- *
  * @param row  Linha: 0 ou 1.
  * @param col  Coluna: 0–39.
  * @param fmt  Format string (printf-style).
@@ -396,9 +333,6 @@ int k044_write_pos(uint8_t row, uint8_t col, const char *fmt, ...)
     __attribute__((format(printf, 3, 4)));
 
 /**
- * Rola texto horizontalmente em uma linha do display.
- * Para texto maior que 15 chars — exibe janela deslizante.
- *
  * @param row       Linha: 0 ou 1.
  * @param text      Texto a rolar.
  * @param delay_ms  Intervalo entre passos em milissegundos.
@@ -407,16 +341,6 @@ int k044_write_pos(uint8_t row, uint8_t col, const char *fmt, ...)
 int k044_scroll_line(uint8_t row, const char *text, unsigned int delay_ms);
 
 /**
- * Inicia scroll contínuo em uma linha do display (marquee).
- * Rola o texto em janela de 'width' chars, repetindo indefinidamente
- * até que k044_scroll_stop() seja chamado.
- *
- * O texto é exibido dentro da área delimitada por (col_start, width),
- * sem afetar o resto da linha.
- *
- * Se o texto tiver <= width chars, escreve diretamente sem thread.
- * Se já houver um scroll ativo, para o anterior antes de iniciar.
- *
  * @param row       Linha: 0 ou 1.
  * @param col_start Coluna inicial da janela de scroll.
  * @param width     Largura da janela (max 40 - col_start).
@@ -445,13 +369,6 @@ int k044_scroll_stop(void);
 int k044_clear(void);
 
 /**
- * Aguarda o dispositivo ficar livre (polling com ECHO).
- *
- * Envia comandos ECHO (0xEE) em loop com intervalo de 1ms ate obter ACK
- * ou o timeout expirar. Util apos operacoes de display que deixam o
- * firmware ocupado (ex: HD44780 busy flag) e o proximo comando PS/2
- * precisa ser aceito sem RESEND.
- *
  * @return K044_OK quando o dispositivo responder, K044_ERR_TIMEOUT
  *         se o timeout for atingido.
  */
@@ -461,11 +378,6 @@ int k044_wait_busy(void);
 int k044_home(void);
 
 /**
- * Posiciona cursor em coordenadas 0-based.
- * A biblioteca codifica internamente para o formato do firmware:
- *   row_enc = (row + 1) + 0x10
- *   col_enc = (col + 1) + 0x10
- *
  * @param row  Linha: 0 (linha 1) ou 1 (linha 2).
  * @param col  Coluna: 0–39.
  * @return K044_OK em sucesso, K044_ERR_RANGE se row > 1 ou col > 39.
@@ -510,18 +422,11 @@ int k044_bell(void);
  * ========================================================================= */
 
 /**
- * Ativa modo PIN pad. LED acende (P0.5 = 0).
- * No modo PIN, k044_keyecho exibe '*' em vez do char real.
- * Envia comando 0xA7 (ENPIN).
- *
  * @return K044_OK em sucesso.
  */
 int k044_pin_enable(void);
 
 /**
- * Desativa modo PIN pad. LED apaga (P0.5 = 1).
- * Envia comando 0xA8 (DIPIN).
- *
  * @return K044_OK em sucesso.
  */
 int k044_pin_disable(void);
@@ -553,9 +458,6 @@ int k044_aux_disable(void);
  * ========================================================================= */
 
 /**
- * Lê 100 bytes da EEPROM do dispositivo (comando 0xA6 SENDM).
- * O firmware sempre envia exatamente 100 bytes.
- *
  * @param buf  Buffer de destino (mínimo 100 bytes).
  * @param len  Tamanho do buffer (deve ser >= 100).
  * @return K044_OK em sucesso, K044_ERR_RANGE se len < 100.
@@ -563,10 +465,6 @@ int k044_aux_disable(void);
 int k044_eeprom_read(uint8_t *buf, size_t len);
 
 /**
- * Le N bytes da EEPROM a partir de um endereco (comando 0xAC EEPROM_READ).
- *
- * O comando aceita endereco (16 bits) e contagem (1-256, 0 = 256).
- *
  * @param addr  Endereco inicial na EEPROM (0-511).
  * @param buf   Buffer de destino.
  * @param len   Numero de bytes a ler (1-256).
@@ -575,19 +473,6 @@ int k044_eeprom_read(uint8_t *buf, size_t len);
 int k044_eeprom_read_from(uint16_t addr, uint8_t *buf, size_t len);
 
 /**
- * Grava tabela completa MAKE ou BREAK na EEPROM (comando 0xAB WRITETBL).
- *
- * MAKE: 176 bytes (44 teclas x 4 bytes)
- * BREAK: 264 bytes (44 teclas x 6 bytes)
- *
- * Cada entrada MAKE tem stride fixo de 4 bytes:
- *   [b0, b1, b2, b3]  onde b0 = scancode (ou 0xE0 se estendido),
- *   b1 = segundo byte (ou 0xFF se simples), b2=b3=0xFF (padding).
- *
- * Cada entrada BREAK tem stride fixo de 6 bytes:
- *   [b0, b1, b2, b3, b4, b5] onde teclas simples = [0xF0, sc, 0xFF...],
- *   teclas estendidas = [0xE0, 0xF0, sc, 0xFF...].
- *
  * @param table_id  TABLE_MAKE (0) ou TABLE_BREAK (1).
  * @param buf       Buffer com os bytes a gravar.
  * @param len       Tamanho do buffer (deve ser >= TABLEM_SIZE ou TABLEB_SIZE).
@@ -600,17 +485,6 @@ int k044_eeprom_read_from(uint16_t addr, uint8_t *buf, size_t len);
 int k044_write_table(uint8_t table_id, const uint8_t *buf, size_t len);
 
 /**
- * Grava tabela de scan codes na EEPROM (comandos 0xA4/0xA5 SETMEM/ENDMEM).
- * O firmware recomputa o CRC automaticamente ao receber 0xA5.
- *
- * Estrutura esperada do buffer (500 bytes max):
- *   [0x000–0x0AF]  176 bytes: tabela make 44 teclas (44 x 4)
- *   [0x0B0–0x1B7]  264 bytes: tabela break 44 teclas (44 x 6)
- *   [0x1B8–0x1CA]   19 bytes: tabela make PIN 20
- *   [0x1CB–0x1F3]   39 bytes: tabela break PIN 20
- *   [0x1F4]          1 byte:  byte de teste (BTEST = 0x5A)
- *   [0x1F5]          1 byte:  CRC (XOR dos bytes 0x00–0x1F3)
- *
  * @param buf  Dados a gravar (formato acima).
  * @param len  Numero de bytes (max 500).
  * @return K044_OK em sucesso.
@@ -714,7 +588,7 @@ int k044_stop_event_loop(void);
 int k044_read_event(k044_event_t *evt, int timeout_ms);
 
 /* =========================================================================
- * KeyEcho — exibição de teclas pressionadas no display (rotina nova)
+ * KeyEcho — exibição de teclas pressionadas no display
  * ========================================================================= */
 
 /** Tipo de notificação do callback keyecho */
@@ -866,11 +740,6 @@ int k044_uinput_is_active(void);
 /**
  * Ativa o forwarding de mouse PS/2 via uinput.
  *
- * Cria um dispositivo de mouse virtual no Linux (/dev/uinput) e passa a
- * decodificar os bytes AUX (canal do mouse) lidos do barramento PS/2 em
- * pacotes PS/2 standard (3 bytes), gerando eventos EV_REL (X, Y) e
- * EV_KEY (botoes esquerdo, direito, meio).
- *
  * A ativacao do forwarding NAO interfere com k044_uinput_enable() —
  * sao dispositivos virtuais independentes (teclado + mouse).
  *
@@ -935,11 +804,6 @@ int k044_is_device_dead(void);
  * O firmware faz passthrough: recebe bytes do host via PS/2 (comando 0xAD),
  * retransmite ao FP module via UART, e retorna a resposta ao host.
  *
- * Protocolo do módulo: Header(6) + PID(1) + PLEN(2) + CMD(1) + PARAMS + CKSUM(2)
- *   Header: EF 01 FF FF FF FF (start code + device address)
- *   PID:    0x01 = comando, 0x07 = resposta
- *   PLEN:   comprimento do payload (dois bytes big-endian)
- *   CKSUM:  soma (16-bit) dos bytes de PID até o último dado
  * ========================================================================= */
 
 /** Código de erro do módulo fingerprint */
@@ -981,8 +845,6 @@ typedef struct {
 
 /**
  * Inicializa comunicação com o módulo fingerprint.
- * Não requer configuração adicional — o firmware já inicializa a UART no boot.
- *
  * @return K044_OK em sucesso.
  */
 int k044_fp_init(void);
@@ -1236,15 +1098,7 @@ const char *k044_fp_confirmation_str(int code);
 int k044_fp_last_confirmation_code(void);
 
 /**
- * Diagnóstico de baixo nível: envia bytes brutos via passthrough 0xAD e lê
- * a resposta crua, sem validar/parsear como protocolo AS608. Serve para
- * testar a UART do módulo fingerprint isoladamente (ex.: sensor removido
- * e TX_FP/RX_FP curto-circuitados para loopback), fora do protocolo real
- * do sensor.
- *
- * NÃO use esta função para comunicação normal com o sensor — use as
- * funções k044_fp_* de alto nível para isso.
- *
+ * Diagnóstico de baixo nível: envia bytes brutos via passthrough 
  * @param data       bytes a enviar (máx. 255)
  * @param data_len   quantidade de bytes em data (máx. 255)
  * @param resp       buffer para a resposta crua
