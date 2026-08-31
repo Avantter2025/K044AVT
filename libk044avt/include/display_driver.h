@@ -83,7 +83,7 @@ extern "C" {
  * ========================================================================= */
 
 #define K044_SC_ENTER      0x5A    /**< Enter                                */
-#define K044_SC_BACKSPACE  0x66    /**< Backspace (label SPACE no TEC44FST)  */
+#define K044_SC_BACKSPACE  0x66    /**< Backspace                             */
 #define K044_SC_ESCAPE     0x76    /**< Escape                               */
 #define K044_SC_BREAK_PFX  0xF0    /**< Prefixo de break code                */
 #define K044_SC_SPACE      0x29    /**< Espaço (barra de espaço)             */
@@ -838,8 +838,8 @@ int k044_keyecho_clear(void);
 /**
  * Ativa a injeção de teclas no sistema Linux via uinput.
  *
- * Cria um dispositivo de entrada virtual com todas as teclas do TEC44FST
- * mapeadas. Uma vez ativo, todo K044_EVT_KEY_MAKE e K044_EVT_KEY_BREAK
+ * Cria um dispositivo de entrada virtual com mapeamento de scancodes.
+ * Uma vez ativo, todo K044_EVT_KEY_MAKE e K044_EVT_KEY_BREAK
  * recebido pelo event loop é traduzido para o keycode Linux equivalente
  * e injetado no sistema.
  *
@@ -1169,20 +1169,40 @@ typedef void (*k044_fp_callback_t)(int status, int step, void *userdata);
  */
 void k044_fp_set_callback(k044_fp_callback_t cb, void *userdata);
 
+/**
+ * Steps reportados via k044_fp_callback_t por k044_fp_enroll()/
+ * k044_fp_search_retry() durante as operacoes de leitura do sensor.
+ * status no callback: 0 = notificacao de progresso normal, outro valor =
+ * confirmation code de uma tentativa de captura malsucedida.
+ */
 #define K044_FP_STEP_WAIT_FINGER   1  /* aguardando o dedo */
 #define K044_FP_STEP_CAPTURED      2  /* leitura capturada com sucesso */
 #define K044_FP_STEP_REMOVE_FINGER 3  /* aguardando remocao do dedo */
 #define K044_FP_STEP_MERGING       4  /* RegModel (mesclando leituras) em andamento */
 #define K044_FP_STEP_STORING       5  /* Store (gravando no banco) em andamento */
 
-
+/**
+ * Cadastro manual em 3 leituras (GetImage+GenChar+RegModel+Store).
+ * Fluxo de captura com progresso reportado via callback:
+ * 1a leitura -> retira o dedo -> 2a leitura -> RegModel -> retira o
+ * dedo -> 3a leitura -> RegModel -> Store. Reporta progresso via
+ * k044_fp_set_callback() (K044_FP_STEP_*).
+ *
+ * @param id                 ID para armazenar (1-999)
+ * @param finger_timeout_ms  timeout esperando o dedo em cada leitura
+ *                           (ex.: 10000)
+ * @return K044_OK em sucesso, K044_ERR_FP/K044_ERR_FP_TIMEOUT em falha -
+ *         use k044_fp_last_confirmation_code() para detalhar.
+ */
 int k044_fp_enroll(uint16_t id, int finger_timeout_ms);
 
 /**
  * Busca no banco com ate' max_attempts tentativas de captura+busca -
  * uma busca malsucedida pode ser so' posicionamento ruim do dedo nessa
  * tentativa especifica, nao ausencia real no banco; cada tentativa faz
- * uma NOVA captura. 
+ * uma NOVA captura (rebuscar o mesmo template geraria o mesmo
+ * resultado). Mesmo fluxo ja validado em op_search()/doSearch().
+ * Reporta progresso via k044_fp_set_callback() (K044_FP_STEP_*).
  *
  * @param buffer_id          buffer de char a usar (tipicamente 1)
  * @param start_page         pagina inicial do banco (0-based)
