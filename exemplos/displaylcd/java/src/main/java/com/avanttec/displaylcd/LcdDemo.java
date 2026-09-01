@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file      LcdDemo.java
- * @brief     GUI Swing de demonstração do display LCD (2x40).
+ * @brief     GUI Swing de demonstração do display LCD (HD44780 2x40).
  * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Teclado Auxiliar)
  * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
  * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
@@ -16,7 +16,7 @@
  *
  * @note      Executar (a partir desta pasta):
  *              mvn -q package
- *              sudo java -Djna.library.path=.driver_display \
+ *              sudo java -Djna.library.path=../../../driver_display \
  *                   -jar target/k044-displaylcd-demo-1.0.0.jar
  *            (precisa de sudo porque k044_open() acessa as portas de I/O.)
  * @target    Linux (x86_64 / Industrial PC)
@@ -148,8 +148,9 @@ public class LcdDemo extends JFrame {
         header.add(banner, BorderLayout.EAST);
         side.add(header, BorderLayout.NORTH);
 
-        /* 16 operações divididas em 2 colunas de 8, ocupando a 
-        *  largura toda abaixo do cabeçalho. */
+        /* Mesmas 16 operações/rótulos/ordem de exemplos/displaylcd/cpp/lcd.cpp
+         * (menu reorganizado por categoria - ver menu_lcd.txt) - divididas
+         * em 2 colunas de 8, ocupando a largura toda abaixo do cabeçalho. */
         JPanel col1 = new JPanel();
         col1.setLayout(new BoxLayout(col1, BoxLayout.Y_AXIS));
         op(col1, "Escrever linha", doWriteLine);
@@ -228,8 +229,12 @@ public class LcdDemo extends JFrame {
             return;
         }
 
-        /* Mantem teclado de 44 teclas, teclado auxiliar e mouse PS/2 vivos
-         * enquanto este programa roda. Nenhuma das tres e fatal se falhar. */
+        /* Mantem teclado TEC44FST (44 teclas), teclado auxiliar (110 teclas,
+         * porta PS/2 propria do AT89S52) e mouse PS/2 vivos no sistema
+         * enquanto este programa roda — sem isto, k044_open() ja desliga
+         * atkbd/psmouse do kernel (CCB=0x04) e nada mais fica escutando o
+         * barramento em favor deles (mesmo padrao de exemplos/displaylcd/
+         * cpp/lcd.cpp). Nenhuma das tres e fatal se falhar. */
         if (lib.k044_uinput_enable() != DisplayLib.K044_OK)
             log("Aviso: uinput indisponível (teclado não será repassado ao sistema).");
         if (lib.k044_mouse_enable() != DisplayLib.K044_OK)
@@ -250,7 +255,8 @@ public class LcdDemo extends JFrame {
     /* Execução assíncrona                                                 */
     /* ------------------------------------------------------------------ */
 
-    /** Roda a operação numa SwingWorker e reabilita os botões ao terminar. */
+    /** Roda a operação numa SwingWorker (mantém a EDT responsiva durante a
+     *  chamada nativa bloqueante) e reabilita os botões ao terminar. */
     private void execute(String label, Op task) {
         setEnabledOps(false);
         connectBtn.setEnabled(false);
@@ -274,7 +280,7 @@ public class LcdDemo extends JFrame {
     }
 
     /* ------------------------------------------------------------------ */
-    /* Operações —  17 operações do menu de exemplos                      */
+    /* Operações — mesmas 17 do menu de exemplos/displaylcd/cpp/lcd.cpp     */
     /* ------------------------------------------------------------------ */
 
     private Op doWriteLine = () -> {
@@ -489,7 +495,9 @@ public class LcdDemo extends JFrame {
     /* Helpers                                                             */
     /* ------------------------------------------------------------------ */
 
-    /** Carrega uma imagem do classpath */
+    /** Carrega uma imagem do classpath (src/main/resources, empacotada no
+     * fat-jar pelo shade-plugin) — retorna null se o recurso não existir ou
+     * falhar ao decodificar, em vez de derrubar a GUI. */
     private Image loadImage(String resourcePath) {
         try (InputStream in = getClass().getResourceAsStream(resourcePath)) {
             if (in == null) return null;

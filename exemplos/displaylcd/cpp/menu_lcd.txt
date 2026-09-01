@@ -1,0 +1,22 @@
+ 1) Escrever linha
+ 2) Escrever nas duas linhas
+ 3) Escrever na posição(li,col)
+ 4) Escrever na posicao do cursor
+ 5) Escrever scroll
+ 6) Parar scroll
+    -----------------------------------
+ 7) Limpar display
+ 8) Limpar display a partir de (li,col)
+    -----------------------------------
+ 9) Cursor ON/OFF
+10) Posicionar Cursor em Home
+11) Posicionar cursor (li,col)
+12) Deslocar linhas
+    ----------------------------------- 
+13) Gravar caracter customizado (CGRAM)
+14) Escrever caracter customizado gravado
+15) Bell
+16) Diagnóstico
+    -----------------------------------
+ 0) Sair
+Opção: 

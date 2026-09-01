@@ -1,12 +1,16 @@
-# Exemplo Java (Swing + JNA) — Display LCD (2x40)
+# Exemplo Java (Swing + JNA) — Display LCD (HD44780 2x40)
 
-GUI de demonstração do módulo de display do dispositivo Avanttec (TEC44AVT),
+GUI de demonstração do módulo de display do dispositivo Avanttec (TEC44FST),
 falando com o LCD **através do driver** `libK044AVT.so` (JNA) — o lado Java só
 usa as rotinas `k044_*` de escrita/cursor/scroll/CGRAM, sem tocar no protocolo
 PS/2 bruto.
 
 O painel central (`LcdPanel`) mostra visualmente um display 2x40, atualizado a
-cada operação que a própria GUI executa.
+cada operação que a própria GUI executa (a biblioteca não expõe uma forma de
+"reler" o texto atual do display físico, então o painel reflete o que foi
+escrito, não uma leitura ao vivo do hardware — ver comentário em
+`LcdPanel.java`). Caracteres customizados da CGRAM são desenhados como o
+bitmap 5x8 real do padrão (não um placeholder de texto).
 
 ## Estrutura
 
@@ -64,14 +68,14 @@ está offline. Rode depois direto pelo classpath (ver seção de Execução abai
 ### Via fat-JAR (recomendado)
 
 ```bash
-sudo java -Djna.library.path= driver_display \
+sudo java -Djna.library.path=/home/paulo/Projetos/projetos-ubuntu/avanttec_project/driver_display \
      -jar target/k044-displaylcd-demo-1.0.0.jar
 ```
 
 Ou, a partir da pasta `java/`, use o caminho relativo:
 
 ```bash
-sudo java -Djna.library.path= driver_display \
+sudo java -Djna.library.path=../../../driver_display \
      -jar target/k044-displaylcd-demo-1.0.0.jar
 ```
 
@@ -82,7 +86,7 @@ externas além de `libK044AVT.so`.
 
 ```bash
 JNA=$(find ~/.m2 -name 'jna-5.14.0.jar' | head -1)
-sudo java -Djna.library.path= driver_display \
+sudo java -Djna.library.path=../../../driver_display \
      -cp "target/classes:$JNA" com.avanttec.displaylcd.LcdDemo
 ```
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file      DisplayLib.java
- * @brief     Interface JNA mapeando as rotinas de display (LCD 2x40).
+ * @brief     Interface JNA mapeando as rotinas de display (LCD HD44780 2x40).
  * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Teclado Auxiliar)
  * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
  * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
@@ -8,7 +8,7 @@
  * @version   v1.0.0
  *
  * @details
- * Mapeia as rotinas de display (LCD 2x40) exportadas por
+ * Mapeia as rotinas de display (LCD HD44780 2x40) exportadas por
  * libK044AVT.so (driver_display/display_driver.h), mais o pequeno
  * subconjunto de ciclo de vida/uinput/mouse/aux/event-loop necessário para
  * abrir o dispositivo e manter os teclados repassados ao sistema — mesmo
