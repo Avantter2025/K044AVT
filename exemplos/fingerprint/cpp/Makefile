@@ -1,5 +1,5 @@
 # =============================================================================
-# makefile_cliente — exemplos do modulo de identificacao digital (C++)
+# Makefile — exemplos do modulo de identificacao digital (C++)
 # Avanttec Tecnologia — TEC44AVT / libK044AVT.so
 #
 # USO
