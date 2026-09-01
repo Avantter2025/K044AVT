@@ -8,11 +8,7 @@
  * @version   v1.0.0
  *
  * @details
- * Menu interativo cobrindo a API pública de display (driver_display/
- * display_driver.h) — escrita, cursor, scroll e o shift nativo do HD44780
- * (k044_display_shift(), ver CLAUDE.md) — no mesmo espírito de
- * exemplos/fingerprint/cpp/finger.cpp: cada opção é uma chamada fina para
- * a função k044_* correspondente, sem reimplementar nada do protocolo.
+ * Menu interativo cobrindo a API pública para o tratamento com o display
  *
  * @note      Compilar: make
  * @note      Executar: sudo ./lcd (k044_open() precisa de acesso às portas I/O)
@@ -22,7 +18,6 @@
  ******************************************************************************/
 
 #include "display_driver.h"
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -158,12 +153,6 @@ static void op_home(void)
     exec("k044_home", k044_home());
 }
 
-/* Qualquer tecla pressionada (44 teclas OU auxiliar - as duas chegam
- * como K044_EVT_KEY_MAKE, mesmo canal de scancodes, ver CLAUDE.md) para
- * o scroll contínuo automaticamente. Roda na thread interna do event
- * loop (k044_set_event_callback) - k044_scroll_stop() bloqueia só até a
- * thread de scroll notar e sair (no máximo ~150-200ms, ver
- * scroll_thread_fn), aceitável aqui. */
 static void key_stops_scroll_cb(const k044_event_t *evt, void *userdata)
 {
     (void)userdata;
@@ -184,10 +173,6 @@ static void op_scroll_start(void)
     int delay_ms = prompt_int("Delay entre passos (ms)", 200);
     int repeat   = prompt_int("Repetições (0 = infinito)", 0);
 
-    /* O scroll continuo transmite PS/2 a cada passo (thread propria, ver
-     * CLAUDE.md) - com K044_LOG_DEBUG ativo isso inunda o terminal
-     * continuamente, atrapalhando o uso do menu. Silencia o log enquanto
-     * o scroll roda; op_scroll_stop() restaura. */
     k044_set_log_level(K044_LOG_NONE);
     exec("k044_scroll_start",
          k044_scroll_start((uint8_t)row, (uint8_t)col_start, (uint8_t)width,
@@ -202,9 +187,6 @@ static void op_scroll_stop(void)
     printf("  Log de debug restaurado.\n");
 }
 
-/* Posiciona o cursor em (row,col) e apaga da' ate' o fim da linha
- * (k044_set_cursor + k044_erase_eol) - "limpar a partir de uma posicao",
- * em vez de k044_clear() (que apaga o display inteiro). */
 static void op_erase_from(void)
 {
     int row = prompt_int("Linha (0 ou 1)", 0);
@@ -214,10 +196,6 @@ static void op_erase_from(void)
     exec("k044_erase_eol", k044_erase_eol());
 }
 
-/* Dispara k044_display_shift() N vezes seguidas, com uma pausa entre cada
- * chamada para dar tempo de observar o display fisicamente — util tambem
- * para inspecionar o comportamento real do shift nativo do HD44780 neste
- * hardware (ver CLAUDE.md / plano de otimizacao do scroll). */
 static void op_shift(void)
 {
     int direction = prompt_int("Direção (0=esquerda, 1=direita)", 0);
@@ -234,19 +212,7 @@ static void op_shift(void)
  * k044_write_cgram_preset()) na CGRAM e escreve numa posição do display
  * pra demonstrar. addr 0-7 mapeia direto para os codigos de controle
  * 0x00-0x07 do HD44780.
- *
- * Os 8 bytes do desenho não são mais transmitidos pelo canal PS/2 - só
- * 2 bytes de parâmetro (padrão + slot). Streaming de 8 bytes arbitrários
- * (a antiga k044_write_cgram()) se mostrou propenso a RESEND persistente
- * neste hardware; ver K044_CGRAM_PRESET_* em display_driver.h.
- *
- * k044_write_cgram_preset() deixa o HD44780 apontando pra dentro da
- * CGRAM internamente ("Set CGRAM Address") - k044_write_char() logo em
- * seguida, SEM antes reposicionar o cursor via k044_set_cursor() (que
- * manda "Set DDRAM Address", trocando o modo de endereçamento de volta
- * pra DDRAM/tela visivel), escreveria de volta na propria CGRAM em vez
- * de aparecer no display. Por isso k044_set_cursor() e' chamado
- * explicitamente antes do write_char aqui. */
+ */
 static void op_cgram(void)
 {
     printf("  1) Seta pra cima\n  2) ç (c cedilha)\n  3) Seta pra baixo\n"
@@ -282,16 +248,8 @@ static void op_cgram(void)
 }
 
 /* Escreve numa posição do display um caractere customizado que já foi
- * gravado num slot da CGRAM (via op_cgram()) - sem reler a CGRAM pelo
- * canal PS/2: a aplicação já sabe qual padrão está em cada slot, então
- * reler 64 bytes de volta só pra confirmar não agrega nada e é
- * exatamente o tipo de transmissão longa que se mostrou propensa a
- * RESEND neste hardware (mesmo raciocínio do preset em op_cgram()).
- *
- * k044_set_cursor() ("Set DDRAM Address") é chamado antes do write_char
- * pelo mesmo motivo de op_cgram(): sem isso o endereçamento continuaria
- * apontando pra CGRAM (deixado assim pela última escrita) e o caractere
- * não apareceria no display. */
+ * gravado num slot da CGRAM (via op_cgram()) 
+ */
 static void op_show_cgram(void)
 {
     int slot = prompt_int("Slot da CGRAM já gravado (0-7)", 0);
@@ -347,12 +305,9 @@ int main(void)
         return 1;
     }
 
-    /* k044_open() desliga atkbd/psmouse do kernel (CCB=0x04) para assumir
-     * o barramento PS/2 pelo resto do processo — mesmo este exemplo nao
-     * lendo teclas do dispositivo diretamente, sem isto o teclado de 44
-     * teclas e o auxiliar ficam completamente mudos no sistema enquanto
-     * o programa roda (nada mais drena o barramento). Mesmo padrao de
-     * exemplos/fingerprint/cpp/finger2.cpp. */
+    /* k044_open() desliga atkbd/psmouse do kernel para assumir
+     * o barramento PS/2 pelo resto do processo
+     */
     if (k044_uinput_enable() != K044_OK)
         fprintf(stderr, "Aviso: uinput indisponivel (teclado nao sera repassado ao sistema).\n");
     if (k044_mouse_enable() != K044_OK)
