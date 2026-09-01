@@ -2,25 +2,13 @@
 # makefile_cliente — exemplos do modulo de identificacao digital (C++)
 # Avanttec Tecnologia — TEC44AVT / libK044AVT.so
 #
-# Versao para quem recebeu o pacote pronto: compila apenas o exemplo e linka
-# contra a libK044AVT.so ja' instalada. Nao reconstroi nem verifica a
-# biblioteca — ela e' pre-requisito, nao alvo.
-#
 # USO
-#   make -f makefile_cliente            compila finger2_v2 (exemplo de referencia)
+#   make 
 #   sudo ./finger2_v2
-#
-#   (o nome nao e' "Makefile", entao o "-f" e' obrigatorio)
-#
-# OUTRO EXEMPLO
-#   Qualquer .cpp desta pasta compila pelo nome, sem extensao:
-#
-#   make -f makefile_cliente finger
 #
 # BIBLIOTECA EM OUTRO LUGAR
 #   Por padrao procura em /usr/local, que e' onde o "make install" instala.
 #
-#   make -f makefile_cliente LIB_DIR=/opt/avanttec/lib INC_DIR=/opt/avanttec/include
 #
 # PRE-REQUISITOS
 #   - libK044AVT.so instalada
@@ -36,9 +24,7 @@ CXXFLAGS = -O2 -Wall -Wextra -std=c++17
 LIB_DIR ?= /usr/local/lib
 INC_DIR ?= /usr/local/include
 
-# finger2_v2 e' o exemplo de referencia do manual: mesma interface do
-# finger2, mas usando as funcoes de alto nivel k044_fp_enroll() e
-# k044_fp_search_retry(), que ja' encapsulam todo o fluxo de captura.
+# finger2_v2 e' o exemplo de referencia
 TARGET   = finger2_v2
 
 .PHONY: all clean
