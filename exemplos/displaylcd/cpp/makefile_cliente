@@ -1,22 +1,10 @@
 # =============================================================================
-# makefile_cliente — exemplo LCD (lcd.cpp)
+# Makefile — exemplo LCD (lcd.cpp)
 # Avanttec Tecnologia — TEC44AVT / libK044AVT.so
 #
-# Versao para quem recebeu o pacote pronto: compila apenas o exemplo e linka
-# contra a libK044AVT.so ja' instalada. Nao reconstroi nem verifica a
-# biblioteca — ela e' pre-requisito, nao alvo.
-#
 # USO
-#   make -f makefile_cliente
+#   make
 #   sudo ./lcd
-#
-#   (o nome nao e' "Makefile", entao o "-f" e' obrigatorio)
-#
-# BIBLIOTECA EM OUTRO LUGAR
-#   Por padrao procura em /usr/local, que e' onde o "make install" instala.
-#   Para apontar outro caminho:
-#
-#   make -f makefile_cliente LIB_DIR=/opt/avanttec/lib INC_DIR=/opt/avanttec/include
 #
 # PRE-REQUISITOS
 #   - libK044AVT.so instalada
