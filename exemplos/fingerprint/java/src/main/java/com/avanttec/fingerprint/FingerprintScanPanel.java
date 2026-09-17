@@ -15,10 +15,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Painel Swing que desenha uma digital estilizada e a anima como um sensor de
- * leitura: 
- * Toda a "imagem animada" é renderizada por código (Java2D) — não há asset
- * binário externo, então o exemplo é autocontido.
+ * Painel Swing de uma digital estilizada como sensor de leitura.
+ * Toda a "imagem animada" é renderizada por código (Java2D).
  */
 public class FingerprintScanPanel extends JPanel {
 
@@ -91,7 +89,7 @@ public class FingerprintScanPanel extends JPanel {
         int rw = Math.min(w, h) / 2 - 30;   // "raio" horizontal da digital
         int rh = (int) (rw * 1.25);
 
-        // Região oval da digital (usada como clip para a varredura)
+        // Região oval da digital 
         Shape print = new Ellipse2D.Double(cx - rw, cy - rh, rw * 2, rh * 2);
 
         Color base;
@@ -125,7 +123,7 @@ public class FingerprintScanPanel extends JPanel {
             g2.draw(new Arc2D.Double(ax, ay, aw, ah, start, extent, Arc2D.OPEN));
             g2.draw(new Arc2D.Double(ax, ay, aw, ah, start + 180, extent, Arc2D.OPEN));
         }
-        // Núcleo (laço) da digital
+        // Núcleo da digital
         g2.draw(new Arc2D.Double(cx - rw * 0.18, cy - rh * 0.30,
                 rw * 0.36, rh * 0.5, -20, 220, Arc2D.OPEN));
 

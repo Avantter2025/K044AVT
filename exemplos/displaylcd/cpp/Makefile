@@ -2,16 +2,21 @@
 # Makefile — exemplo LCD (lcd.cpp)
 # Avanttec Tecnologia — TEC44AVT / libK044AVT.so
 #
+# Compila e linka a libK044AVT.so ja' instalada.
+#
 # USO
 #   make
 #   sudo ./lcd
+#
+# BIBLIOTECA EM OUTRO LUGAR
+#   Por padrao procura em /usr/local
+#   Para apontar outro caminho:
 #
 # PRE-REQUISITOS
 #   - libK044AVT.so instalada
 #   - headers display_driver.h e k044avt.hpp
 #   - g++ com suporte a C++17
 #
-# O executavel precisa de acesso direto as portas PS/2, entao roda com sudo.
 # =============================================================================
 
 CXX      = g++

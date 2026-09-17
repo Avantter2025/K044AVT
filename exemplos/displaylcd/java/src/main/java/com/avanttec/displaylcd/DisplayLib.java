@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file      DisplayLib.java
- * @brief     Interface JNA mapeando as rotinas de display (LCD HD44780 2x40).
+ * @brief     Interface JNA mapeando as rotinas de display (LCD 2x40).
  * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Teclado Auxiliar)
  * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
  * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
@@ -8,14 +8,9 @@
  * @version   v1.0.0
  *
  * @details
- * Mapeia as rotinas de display (LCD HD44780 2x40) exportadas por
- * libK044AVT.so (driver_display/display_driver.h), mais o pequeno
- * subconjunto de ciclo de vida/uinput/mouse/aux/event-loop necessário para
- * abrir o dispositivo e manter os teclados repassados ao sistema — mesmo
- * padrão de exemplos/fingerprint/java/FingerprintLib.java: um binding JNA
- * próprio do módulo, duplicando localmente essas funções gerais em vez de
- * depender do binding compartilhado exemplos/java/K044AVT.java (que por sua
- * vez não mapeia k044_write_char_raw()/k044_write_cgram_preset()).
+ * Mapeia as rotinas de display (LCD 2x40) exportadas por
+ * libK044AVT.so , mais o subconjunto de ciclo de loop necessário para
+ * abrir o dispositivo e manter os teclados repassados ao sistema.
  *
  * @note      Dependências: libK044AVT.so, JNA (net.java.dev.jna)
  * @target    Linux (x86_64 / Industrial PC)
@@ -88,10 +83,10 @@ public interface DisplayLib extends Library {
                            int delayMs, int repeat);
     int k044_scroll_stop();
 
-    /* ---- Shift nativo do HD44780 ---- */
+    /* ---- Shift nativo ---- */
     int k044_display_shift(int direction);
 
-    /* ---- CGRAM: padrões pré-gravados em ROM (comando 0xB5) ---- */
+    /* ---- CGRAM: padrões pré-gravados em ROM  ---- */
     int K044_CGRAM_PRESET_ARROW_UP      = 1;
     int K044_CGRAM_PRESET_C_CEDILLA     = 2;
     int K044_CGRAM_PRESET_ARROW_DOWN    = 3;

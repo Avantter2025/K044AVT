@@ -8,17 +8,8 @@
  * @version   v1.0.0
  *
  * @details
- * Painel visual representando o display físico HD44780 2x40 — Java2D puro,
- * sem assets externos (mesmo princípio de FingerprintScanPanel em
- * exemplos/fingerprint/java/: nenhuma imagem/ícone bundled).
+ * Painel visual representando o display físico  2x40 
  *
- * A biblioteca não expõe nenhuma função de "ler o texto atual do display"
- * (k044_read_cgram() só lê CGRAM, não DDRAM/texto — e mesmo essa leitura se
- * mostrou pouco confiável neste hardware, ver CLAUDE.md), então este painel
- * mantém um modelo local do que a própria aplicação escreveu por último,
- * atualizado explicitamente por LcdDemo a cada operação bem-sucedida — não
- * é uma leitura ao vivo do hardware, é a representação do que deveria estar
- * lá segundo os comandos já enviados.
  *
  * @target    Linux (x86_64 / Industrial PC)
  *
@@ -48,14 +39,7 @@ public class LcdPanel extends JPanel {
     private static final Color COLOR_TEXT_DIM  = new Color(0x1E, 0x55, 0x1E);
     private static final Color COLOR_CURSOR    = new Color(0xC8, 0xFF, 0xB0);
 
-    /**
-     * Bitmaps 5x8 dos padrões pré-gravados em ROM (mesmos bytes de
-     * CGRAM_PATTERN_* em firmware/TEC44fst.ASM e dos arrays que existiam em
-     * lcd.cpp antes da migração pra ROM) — índice 1-9, casando com
-     * DisplayLib.K044_CGRAM_PRESET_*. Usado só pra desenhar visualmente o
-     * caractere customizado no slot certo; não é lido do hardware.
-     */
-    private static final int[][] PRESET_BITMAPS = {
+     private static final int[][] PRESET_BITMAPS = {
         null, // índice 0 não usado (presets começam em 1)
         { 0x04, 0x0E, 0x15, 0x04, 0x04, 0x04, 0x04, 0x00 }, // 1 ARROW_UP
         { 0x00, 0x0E, 0x10, 0x10, 0x10, 0x0E, 0x04, 0x0C }, // 2 C_CEDILLA
@@ -68,11 +52,7 @@ public class LcdPanel extends JPanel {
         { 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F }, // 9 BATTERY_FULL
     };
 
-    /** Sentinela: valores 1-9 no grid significam "desenhar o bitmap do
-     * preset N aqui" em vez de um caractere de texto normal (nenhum texto
-     * real usa códigos < 0x20, mesma faixa que o firmware trata como
-     * controle — ver CHK_CARAC em firmware/DISP40.INC). */
-    private static boolean isCustomSlotMarker(char c) {
+     private static boolean isCustomSlotMarker(char c) {
         return c >= 1 && c <= 9;
     }
 
@@ -122,13 +102,7 @@ public class LcdPanel extends JPanel {
         repaint();
     }
 
-    /** Roda as 40 colunas de ambas as linhas em si mesmas — equivalente
-     * visual do shift nativo do HD44780 (k044_display_shift()) nesta
-     * hardware específica, que é 2x40 sem margem de DDRAM oculta (nada de
-     * texto "fora da tela" pra revelar, ver CLAUDE.md): direction=0 desloca
-     * pra esquerda (cada coluna recebe o conteúdo da coluna seguinte, a
-     * última fica em branco), direction=1 desloca pra direita. */
-    public void rotate(int direction) {
+     public void rotate(int direction) {
         for (char[] r : grid) {
             if (direction == 1) {
                 char last = r[COLS - 1];
@@ -143,11 +117,7 @@ public class LcdPanel extends JPanel {
         repaint();
     }
 
-    /** Marca uma posição pra desenhar o bitmap do padrão CGRAM pré-gravado
-     * (ver DisplayLib.K044_CGRAM_PRESET_*, 1-9) em vez de um caractere de
-     * texto — usado pelos itens "Caractere customizado"/"Escrever
-     * caractere já gravado". */
-    public void setCustomChar(int row, int col, int presetId) {
+     public void setCustomChar(int row, int col, int presetId) {
         if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
         if (presetId < 1 || presetId >= PRESET_BITMAPS.length) return;
         grid[row][col] = (char) presetId;
@@ -157,8 +127,7 @@ public class LcdPanel extends JPanel {
     public int getCursorRow() { return cursorRow; }
     public int getCursorCol() { return cursorCol; }
 
-    /** Limpa as duas linhas (equivalente visual a k044_clear()). */
-    public void clear() {
+     public void clear() {
         for (char[] r : grid) java.util.Arrays.fill(r, ' ');
         cursorRow = 0;
         cursorCol = 0;
@@ -226,7 +195,7 @@ public class LcdPanel extends JPanel {
                     int ty = (int) (cellY + (cellH + fm.getAscent() - fm.getDescent()) / 2f);
                     g2.drawString(String.valueOf(c), tx, ty);
                 } else {
-                    // Traço bem sutil marcando a célula vazia (visual autêntico de LCD segmentado)
+                    // Traço  marcando a célula vazia 
                     g2.setColor(COLOR_TEXT_DIM);
                     int ty = (int) (cellY + cellH * 0.86f);
                     g2.drawLine((int) (cellX + cellW * 0.15f), ty, (int) (cellX + cellW * 0.85f), ty);
@@ -237,9 +206,6 @@ public class LcdPanel extends JPanel {
         g2.dispose();
     }
 
-    /** Desenha o bitmap 5x8 de um padrão CGRAM como uma matriz de pontos,
-     * do mesmo jeito que o HD44780 real renderiza um caractere customizado
-     * (cada byte de bitmap = 1 linha, 5 bits menos significativos usados). */
     private void drawCustomGlyph(Graphics2D g2, int[] bitmap, float cellX, float cellY,
                                   float cellW, float cellH, Color color) {
         int bitmapCols = 5, bitmapRows = 8;

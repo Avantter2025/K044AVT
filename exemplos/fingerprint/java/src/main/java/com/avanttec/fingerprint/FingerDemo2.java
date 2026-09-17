@@ -23,21 +23,6 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * "Revisão 2" de {@link FingerDemo}: mesma GUI/comportamento, mas
- * cadastrar/identificar/buscar usam as funções de alto nível
- * — mesma migração já feita no lado C++, ver
- * exemplos/fingerprint/cpp/finger2_v2.cpp.
- *
-  *
- * Executar (a partir desta pasta) — usa o MESMO jar sombreado de
- * FingerDemo, só troca "-jar" (que força o Main-Class do manifesto) por
- * "-cp jar classe" (que não força):
- *   mvn -q package
- *   sudo java -Djna.library.path=../../../driver_display \
- *        -cp target/k044-fingerprint-demo-1.0.0.jar \
- *        com.avanttec.fingerprint.FingerDemo2
- */
 public class FingerDemo2 extends JFrame {
 
     private final FingerprintLib fp = FingerprintLib.INSTANCE;
@@ -47,9 +32,6 @@ public class FingerDemo2 extends JFrame {
     private JButton connectBtn;
     private boolean connected = false;
 
-    // Mantém referência forte ao callback.
-    // Entende os K044_FP_STEP_* relatados por k044_fp_enroll()/
-    // k044_fp_search_retry(), mesmo texto de fp_progress() em finger2_v2.cpp.
     private final FingerprintLib.FpCallback progressCb = (status, step, ud) ->
             SwingUtilities.invokeLater(() -> {
                 if (status != 0) {
@@ -94,8 +76,6 @@ public class FingerDemo2 extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        /* setDefaultCloseOperation(EXIT_ON_CLOSE) chama System.exit()
-         * direto, sem passar por toggleConnect() — se o usuario fechar a janela */
         Runtime.getRuntime().addShutdownHook(new Thread(this::disconnectDevice));
     }
 
@@ -128,7 +108,7 @@ public class FingerDemo2 extends JFrame {
 
     private interface Op { int run() throws Exception; }
 
-    /** Cria um botão de operação que anima e roda em background. */
+    /** Cria um botão de operação que anima e roda em background */
     private void op(JPanel side, String label, OpTask task) {
         JButton b = addButton(side, label, e -> task.execute(label));
         opButtons.add(b);
@@ -148,9 +128,7 @@ public class FingerDemo2 extends JFrame {
     /* Conexão                                                             */
     /* ------------------------------------------------------------------ */
 
-    /** Fecha o dispositivo se estiver conectado. Chamada tanto pelo botão
-     *  "Desconectar" quanto pelo shutdown hook da JVM (ver construtor) —
-     *  idempotente e segura de chamar de outra thread (shutdown hook). */
+    /** Fecha o dispositivo se estiver conectado */
     private synchronized void disconnectDevice() {
         if (!connected) return;
         fp.k044_fp_set_callback(null, Pointer.NULL);
@@ -178,8 +156,7 @@ public class FingerDemo2 extends JFrame {
             return;
         }
 
-        /* Mantem teclado TEC44avT, teclado auxiliar e mouse PS/2 vivos no
-         * sistema durante a execucao */
+        /* Verifica status dos dispositivod */
         if (fp.k044_uinput_enable() != FingerprintLib.K044_OK)
             log("Aviso: uinput indisponível (teclado não será repassado ao sistema).");
         if (fp.k044_mouse_enable() != FingerprintLib.K044_OK)
@@ -198,7 +175,7 @@ public class FingerDemo2 extends JFrame {
             return;
         }
         fp.k044_fp_set_callback(progressCb, Pointer.NULL);
-        fp.k044_set_log_level(FingerprintLib.K044_LOG_DEBUG);
+       
         connected = true;
         connectBtn.setText("Desconectar");
         setEnabledOps(true);
@@ -207,13 +184,13 @@ public class FingerDemo2 extends JFrame {
     }
 
     /* ------------------------------------------------------------------ */
-    /* Execução assíncrona com animação                                    */
+    /* Execução assíncrona com animação                                   */
     /* ------------------------------------------------------------------ */
 
-    /** Encapsula uma operação: anima, roda em background, reporta resultado. */
+    /** Encapsula uma operação: anima e roda em background; */
     private final class OpTask {
         final Op body;
-        final boolean scanning;   // true = operação que lê o dedo (anima varredura)
+        final boolean scanning;   // true = captura o dedo (anima varredura)
         OpTask(Op body, boolean scanning) { this.body = body; this.scanning = scanning; }
 
         void execute(String label) {
@@ -248,8 +225,7 @@ public class FingerDemo2 extends JFrame {
 
     private static final int FP_TIMEOUT_MS = 10000;
 
-    /* Cadastro em 3 leituras — todo o fluxo (esperar/capturar/retirar/
-     * mesclar/gravar) agora em k044_fp_enroll() */
+    /* Cadastro em 3 leituras */
     private OpTask doEnroll = scanOp(() -> {
         int id = askInt("ID para cadastrar (1-999)", 1);
         if (id < 0) return cancelled();
@@ -261,8 +237,7 @@ public class FingerDemo2 extends JFrame {
         return r;
     });
 
-    /* Identificação = busca de tentativa única (maxAttempts=1), mesma
-     * simplificação já usada em FingerDemo.java/finger2_v2.cpp */
+    /* Identificação em tentativa única  */
     private OpTask doIdentify = scanOp(() -> {
         log("   coloque o dedo para identificar...");
         ShortByReference id = new ShortByReference((short) 0xFFFF);
@@ -275,8 +250,7 @@ public class FingerDemo2 extends JFrame {
         return r;
     });
 
-    /* Busca com até 3 tentativas de captura+busca — fluxo completo agora
-     * em k044_fp_search_retry(). */
+    /* Busca com até 3 tentativas de captura+busca */
     private OpTask doSearch = scanOp(() -> {
         log("   coloque o dedo para buscar no banco (até 3 tentativas)...");
         ShortByReference id = new ShortByReference((short) 0xFFFF);
@@ -289,8 +263,7 @@ public class FingerDemo2 extends JFrame {
         return r;
     });
 
-    /* Controla o LED do sensor (comando 0x3C, PS_ControlBLN) — cor azul
-     * fixa. Não lê o dedo, usa quickOp (sem animação de varredura). */
+    /* Controla o LED do sensor — cor azul */
     private OpTask doLed = quickOp(() -> {
         String[] options = { "Aceso", "Apagado", "Piscando (rápido)", "Piscando lento (respirando)" };
         int choice = JOptionPane.showOptionDialog(this, "Modo do LED", "LED do sensor",
@@ -325,7 +298,12 @@ public class FingerDemo2 extends JFrame {
         NFPage p = new NFPage();
         int r = fp.k044_fp_read_nfpage(p);
         if (r != 0) { log("   ✗ falha ao ler info (" + r + ")"); return r; }
-        /* JNA nao sincroniza automaticamente os campos Java  */
+        
+        /* -------------------------------------------------------------- */
+        /* JNA nao sincroniza automaticamente os campos Java a partir da  */
+        /* memoria nativa apos a chamada, a menos que a Structure seja    */
+        /* declarada como Structure.ByReference .                         */
+        /* -------------------------------------------------------------- */
         p.read();
         log("   registros=" + (p.registros & 0xFFFF)
                 + " capacidade=" + (p.database_size & 0xFFFF)
@@ -360,7 +338,7 @@ public class FingerDemo2 extends JFrame {
     });
 
     /* ------------------------------------------------------------------ */
-    /* Helpers                                                             */
+    /* Extras                                                             */
     /* ------------------------------------------------------------------ */
 
     /** Diálogo de inteiro; retorna -1 se cancelado/ inválido. */

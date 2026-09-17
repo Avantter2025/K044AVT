@@ -1,14 +1,14 @@
 /*******************************************************************************
  * @file      lcd.cpp
  * @brief     Exemplo interativo (CLI) do display LCD 2x40 via libK044AVT.so.
- * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Teclado Auxiliar)
+ * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Tecl. Aux)
  * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
  * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
  * @date      19/08/2026
  * @version   v1.0.0
  *
  * @details
- * Menu interativo cobrindo a API pública para o tratamento com o display
+ * API pública de display 
  *
  * @note      Compilar: make
  * @note      Executar: sudo ./lcd (k044_open() precisa de acesso às portas I/O)
@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "display_driver.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -100,7 +101,7 @@ static void op_write_line(void)
 {
     int row = prompt_int("Linha (0 ou 1)", 0);
     char text[64];
-    prompt_str("Texto (até 39 chars)", "Olá, K044AVT!", text, sizeof(text));
+    prompt_str("Texto (até 39 chars)", "Ola, K044AVT!", text, sizeof(text));
     exec("k044_write_line", k044_write_line((uint8_t)row, text));
 }
 
@@ -157,9 +158,7 @@ static void key_stops_scroll_cb(const k044_event_t *evt, void *userdata)
 {
     (void)userdata;
     if (evt->type != K044_EVT_KEY_MAKE) return;
-    k044_scroll_stop();
-    //k044_set_log_level(K044_LOG_DEBUG);
-    //k044_set_log_level(K044_LOG_TRACE);
+    k044_scroll_stop(); 
 }
 
 static void op_scroll_start(void)
@@ -174,6 +173,7 @@ static void op_scroll_start(void)
     int repeat   = prompt_int("Repetições (0 = infinito)", 0);
 
     k044_set_log_level(K044_LOG_NONE);
+
     exec("k044_scroll_start",
          k044_scroll_start((uint8_t)row, (uint8_t)col_start, (uint8_t)width,
                             text, (unsigned int)delay_ms, repeat));
@@ -182,8 +182,6 @@ static void op_scroll_start(void)
 static void op_scroll_stop(void)
 {
     exec("k044_scroll_stop", k044_scroll_stop());
-    //k044_set_log_level(K044_LOG_DEBUG);
-    //k044_set_log_level(K044_LOG_TRACE);
     printf("  Log de debug restaurado.\n");
 }
 
@@ -208,10 +206,8 @@ static void op_shift(void)
     }
 }
 
-/* Grava um dos padrões pré-definidos (ROM do firmware,
- * k044_write_cgram_preset()) na CGRAM e escreve numa posição do display
- * pra demonstrar. addr 0-7 mapeia direto para os codigos de controle
- * 0x00-0x07 do HD44780.
+/* Grava um dos padrões pré-definidos (ROM do firmware, na CGRAM)
+ * e escreve numa posição do display 
  */
 static void op_cgram(void)
 {
@@ -248,7 +244,7 @@ static void op_cgram(void)
 }
 
 /* Escreve numa posição do display um caractere customizado que já foi
- * gravado num slot da CGRAM (via op_cgram()) 
+ * gravado num slot da CGRAM. 
  */
 static void op_show_cgram(void)
 {
@@ -304,10 +300,7 @@ int main(void)
         fprintf(stderr, "Falha ao abrir o dispositivo (%d). Execute com sudo.\n", r);
         return 1;
     }
-
-    /* k044_open() desliga atkbd/psmouse do kernel para assumir
-     * o barramento PS/2 pelo resto do processo
-     */
+   
     if (k044_uinput_enable() != K044_OK)
         fprintf(stderr, "Aviso: uinput indisponivel (teclado nao sera repassado ao sistema).\n");
     if (k044_mouse_enable() != K044_OK)
@@ -317,7 +310,6 @@ int main(void)
         fprintf(stderr, "Aviso: teclado auxiliar PS/2 indisponivel.\n");
     k044_set_event_callback(key_stops_scroll_cb, NULL);
 
-    //k044_set_log_level(K044_LOG_DEBUG);
 
     printf("--- Diagnóstico inicial ---\n");
     diag_status();

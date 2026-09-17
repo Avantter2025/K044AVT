@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file      LcdDemo.java
- * @brief     GUI Swing de demonstração do display LCD (HD44780 2x40).
+ * @brief     GUI Swing de demonstração do display LCD (2x40).
  * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Teclado Auxiliar)
  * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
  * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
@@ -8,11 +8,7 @@
  * @version   v1.0.0
  *
  * @details
- * GUI Swing de demonstração do módulo de display LCD (HD44780, 2x40) via
- * libK044AVT.so — mesmo espírito de exemplos/fingerprint/java/FingerDemo.java:
- * cada operação é um botão, executado numa thread de fundo (SwingWorker) pra
- * manter a UI responsiva, e o painel central (LcdPanel) mostra visualmente o
- * que a aplicação escreveu no display 2x40.
+ * GUI Swing de demonstração do módulo de display LCD (2x40).
  *
  * @note      Executar (a partir desta pasta):
  *              mvn -q package
@@ -62,10 +58,6 @@ public class LcdDemo extends JFrame {
     private JButton connectBtn;
     private boolean connected = false;
 
-    /** Lembra qual padrão pré-gravado foi escrito por último em cada slot
-     * (0-7) da CGRAM — só existe aqui, do lado Java; o dispositivo não
-     * expõe uma forma confiável de reler isso (ver LcdPanel). Usado pelo
-     * item "Escrever caractere já gravado" pra saber qual bitmap desenhar. */
     private final int[] slotPattern = new int[8];
 
     public LcdDemo() {
@@ -76,12 +68,7 @@ public class LcdDemo extends JFrame {
         Image icon = loadImage("/avanttec.png");
         if (icon != null) {
             setIconImage(icon);
-            /* JFrame.setIconImage() só cobre o ícone da própria janela
-             * (barra de título/alt-tab) — em muitos ambientes Linux
-             * (GNOME/KDE) o ícone da barra de tarefas/dock é controlado
-             * separadamente pela API Taskbar (Java 9+). Sem isto o app
-             * podia aparecer com o ícone genérico do Java na barra de
-             * tarefas mesmo com a janela mostrando o ícone certo. */
+     
             if (java.awt.Taskbar.isTaskbarSupported()) {
                 java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
                 if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
@@ -116,10 +103,6 @@ public class LcdDemo extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        /* setDefaultCloseOperation(EXIT_ON_CLOSE) chama System.exit() direto,
-         * sem passar por toggleConnect() — mesmo motivo/fix de FingerDemo:
-         * sem o shutdown hook, k044_close() nunca rodaria ao fechar a
-         * janela, deixando o CCB do i8042 alterado (atkbd/psmouse fora). */
         Runtime.getRuntime().addShutdownHook(new Thread(this::disconnectDevice));
     }
 
@@ -148,9 +131,6 @@ public class LcdDemo extends JFrame {
         header.add(banner, BorderLayout.EAST);
         side.add(header, BorderLayout.NORTH);
 
-        /* Mesmas 16 operações/rótulos/ordem de exemplos/displaylcd/cpp/lcd.cpp
-         * (menu reorganizado por categoria - ver menu_lcd.txt) - divididas
-         * em 2 colunas de 8, ocupando a largura toda abaixo do cabeçalho. */
         JPanel col1 = new JPanel();
         col1.setLayout(new BoxLayout(col1, BoxLayout.Y_AXIS));
         op(col1, "Escrever linha", doWriteLine);
@@ -229,13 +209,7 @@ public class LcdDemo extends JFrame {
             return;
         }
 
-        /* Mantem teclado TEC44FST (44 teclas), teclado auxiliar (110 teclas,
-         * porta PS/2 propria do AT89S52) e mouse PS/2 vivos no sistema
-         * enquanto este programa roda — sem isto, k044_open() ja desliga
-         * atkbd/psmouse do kernel (CCB=0x04) e nada mais fica escutando o
-         * barramento em favor deles (mesmo padrao de exemplos/displaylcd/
-         * cpp/lcd.cpp). Nenhuma das tres e fatal se falhar. */
-        if (lib.k044_uinput_enable() != DisplayLib.K044_OK)
+         if (lib.k044_uinput_enable() != DisplayLib.K044_OK)
             log("Aviso: uinput indisponível (teclado não será repassado ao sistema).");
         if (lib.k044_mouse_enable() != DisplayLib.K044_OK)
             log("Aviso: mouse PS/2 indisponível.");
@@ -243,7 +217,7 @@ public class LcdDemo extends JFrame {
         if (lib.k044_aux_enable() != DisplayLib.K044_OK)
             log("Aviso: teclado auxiliar PS/2 indisponível.");
 
-        lib.k044_set_log_level(DisplayLib.K044_LOG_DEBUG);
+             
         connected = true;
         connectBtn.setText("Desconectar");
         setEnabledOps(true);
@@ -255,9 +229,7 @@ public class LcdDemo extends JFrame {
     /* Execução assíncrona                                                 */
     /* ------------------------------------------------------------------ */
 
-    /** Roda a operação numa SwingWorker (mantém a EDT responsiva durante a
-     *  chamada nativa bloqueante) e reabilita os botões ao terminar. */
-    private void execute(String label, Op task) {
+     private void execute(String label, Op task) {
         setEnabledOps(false);
         connectBtn.setEnabled(false);
         log("» " + label);
@@ -280,12 +252,12 @@ public class LcdDemo extends JFrame {
     }
 
     /* ------------------------------------------------------------------ */
-    /* Operações — mesmas 17 do menu de exemplos/displaylcd/cpp/lcd.cpp     */
+    /* Operações                                                          */
     /* ------------------------------------------------------------------ */
 
     private Op doWriteLine = () -> {
         int row = askInt("Linha (0 ou 1)", 0);
-        String text = askString("Texto (até 39 chars)", "Olá, K044AVT!");
+        String text = askString("Texto (até 39 chars)", "Ola, K044AVT!");
         if (text == null) return cancelled();
         int r = lib.k044_write_line((byte) row, text);
         if (r == DisplayLib.K044_OK) lcd.setLine(row, text);
@@ -377,10 +349,7 @@ public class LcdDemo extends JFrame {
         for (int i = 0; i < times && r == DisplayLib.K044_OK; i++) {
             r = lib.k044_display_shift(direction);
         }
-        /* Este display é 2x40 sem margem de DDRAM oculta (ver CLAUDE.md) —
-         * um shift nativo do HD44780 desloca as 40 colunas visíveis em si
-         * mesmas (rotação), não revela texto "fora da tela" como em
-         * displays com DDRAM maior que a janela visível. */
+    
         if (r == DisplayLib.K044_OK) {
             for (int i = 0; i < times; i++) lcd.rotate(direction);
         }
@@ -392,10 +361,7 @@ public class LcdDemo extends JFrame {
         "Seta pra direita", "ã (a til)", "Check/visto", "Bateria vazia", "Bateria cheia",
     };
 
-    /** Diálogo modal com um botão por padrão, empilhados verticalmente (em vez
-     * de JOptionPane.showOptionDialog, que alinha horizontalmente e deixava
-     * as 9 opções apertadas/cortadas). Retorna -1 se fechado sem escolher. */
-    private int askCgramPattern() {
+     private int askCgramPattern() {
         JDialog dialog = new JDialog(this, "Caractere customizado — escolha o padrão", true);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -492,12 +458,9 @@ public class LcdDemo extends JFrame {
     };
 
     /* ------------------------------------------------------------------ */
-    /* Helpers                                                             */
+    /* Helpers                                                            */
     /* ------------------------------------------------------------------ */
 
-    /** Carrega uma imagem do classpath (src/main/resources, empacotada no
-     * fat-jar pelo shade-plugin) — retorna null se o recurso não existir ou
-     * falhar ao decodificar, em vez de derrubar a GUI. */
     private Image loadImage(String resourcePath) {
         try (InputStream in = getClass().getResourceAsStream(resourcePath)) {
             if (in == null) return null;

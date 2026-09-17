@@ -50,6 +50,14 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.avanttec.displaylcd.LcdDemo</mainClass>
+                                    <manifestEntries>
+                                        <!-- JDK 22+ (JEP 472): declara no proprio jar a permissao que o
+                                             JNA precisa para System::load carregar libK044AVT.so, sem
+                                             depender de flag de linha de comando (enable native access
+                                             para ALL-UNNAMED). Sem isto, java -jar imprime o aviso
+                                             "Restricted methods will be blocked in a future release". -->
+                                        <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                                    </manifestEntries>
                                 </transformer>
                             </transformers>
                             <filters>

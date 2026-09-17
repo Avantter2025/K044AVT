@@ -7,31 +7,31 @@ Pasta contendo exemplos práticos de programas que utilizam a biblioteca libK044
 ```
 exemplos/
 ├── fingerprint/          Exemplos do módulo de impressão digital (Sensor AS608)
-│   ├── cpp/              Exemplos em C++ ( finger2_v2)
-│   ├── java/             Exemplos em Java (GUI Swing - FingerDemo)
-│   └── README.md         Documentação
+│   ├── c/                Exemplos em C (test_fingerprint, test_fingerprint_led) + README.md
+│   ├── cpp/              Exemplo em C++ (finger2_v2)
+│   └── java/             Exemplos em Java (GUI Swing - FingerDemo)
 │
-└── displaylc/            Exemplos do módulo Display LCD (2×40)
-    ├── cpp/              Exemplos em C (testes de display)
-    ├── java/             Exemplos em Java (GUI - LcdDemo)
-    └── README.md         Documentação
+└── displaylcd/           Exemplos do módulo Display LCD (2×40)
+    ├── c/                Exemplos em C (diagnostico_lcd e outros testes) + README.md
+    ├── cpp/              Exemplo em C++ (lcd)
+    └── java/             Exemplos em Java (GUI - LcdDemo)
 ```
 
 ## 🚀 Como Usar
 
 ### Pré-requisitos
 
-1. **libK044AVT instalada**
-   ```bash
-   sudo /caminho/para/libk044avt/install.sh
-   ```
+1. **libK044AVT instalada** — ver [../README.md](../README.md) ou
+   [../instrucao-inicial.md](../instrucao-inicial.md) para o passo a passo
+   completo (`driver64/`/`driver32/` → `/usr/local/{lib,include}` →
+   `ldconfig`).
 
 2. **Compiladores/Interpretadores**
-   - **C/C++**: `g++`/`gcc` (GCC)
-   - **Java**: JDK 11+
+   - **C/C++**: `gcc`/`g++` (GCC)
+   - **Java**: JDK 17
    - **Build Tools**: `make` e `maven`
    ```bash
-   sudo apt-get install -y build-essential default-jdk maven
+   sudo apt install -y build-essential pkgconf libevdev-dev openjdk-17-jdk maven
    ```
 
 3. **Teclado TEC44AVT conectado** na porta PS/2 roxa
@@ -40,11 +40,24 @@ exemplos/
 
 ### 🔴 Fingerprint (Leitor de Impressão Digital)
 
+#### C - Exemplos mínimos
+
+```bash
+cd exemplos/fingerprint
+sudo make -C ./c
+sudo ./c/test_fingerprint
+```
+**Programas disponíveis:**
+- `test_fingerprint` - menu completo (info, cadastro, busca, LED, diagnóstico)
+- `test_fingerprint_led` - teste isolado do LED do sensor (cor + estado)
+
+Detalhes em [fingerprint/c/README.md](fingerprint/c/README.md).
+
 #### C++ - Menu CLI Interativo
 
 ```bash
 cd exemplos/fingerprint/cpp
-make                      # Compila todos
+make                      # Compila
 sudo ./finger2_v2         # API alto nível
 ```
 **Programas disponíveis:**
@@ -54,9 +67,8 @@ sudo ./finger2_v2         # API alto nível
 
 ```bash
 cd exemplos/fingerprint/java
-mvn clean package
-sudo java -Djna.library.path=../../../libk044avt/lib \
-         -jar target/k044-fingerprint-demo-1.0.0.jar
+mvn -q clean package
+sudo java -jar target/k044-fingerprint-demo-1.0.0.jar
 ```
 
 **Recursos:**
@@ -71,26 +83,32 @@ sudo java -Djna.library.path=../../../libk044avt/lib \
 #### C - Vários Testes
 
 ```bash
-cd exemplos/displaylc/cpp
-make                           # Compila todos
-sudo ./lcd                     # Aplicação principal
+cd exemplos/displaylcd
+sudo make -C ./c
+sudo ./c/diagnostico_lcd       # Diagnóstico do display
 ```
 
-**Testes disponíveis:**
-- `test_display_basico` - Operações básicas
-- `test_display_cursor` - Controle de cursor
-- `test_display_scroll` - Scroll horizontal
-- `test_display_keyecho_nav` - Integração com teclado
-- `test_display_bell` - Efeitos visuais
-- E mais...
+Lista completa dos testes disponíveis (mais de dez programas — teclado,
+cursor, scroll, keyecho, CGRAM, etc.) em
+[displaylcd/c/README.md](displaylcd/c/README.md).
+
+OBS: use teclado e mouse USB durante o teste de scroll — ele ocupa banda
+grande do canal PS/2 e pode disputar com o teclado K044AVT.
+
+#### C++ - Aplicação principal
+
+```bash
+cd exemplos/displaylcd/cpp
+make                           # Compila
+sudo ./lcd                     # Aplicação principal
+```
 
 #### Java - Aplicação Demo
 
 ```bash
-cd exemplos/displaylc/java
-mvn clean package
-sudo java -Djna.library.path=../../../libk044avt/lib \
-         -jar target/k044-displaylcd-demo-1.0.0.jar
+cd exemplos/displaylcd/java
+mvn -q clean package
+sudo java -jar target/k044-displaylcd-demo-1.0.0.jar
 ```
 
 **Recursos:**
@@ -100,16 +118,26 @@ sudo java -Djna.library.path=../../../libk044avt/lib \
 
 ## 🔧 Compilação Rápida
 
-### C/C++
+### C
+
+```bash
+# Fingerprint
+cd exemplos/fingerprint && sudo make -C ./c
+
+# Display LCD
+cd exemplos/displaylcd && sudo make -C ./c
+```
+
+### C++
 
 ```bash
 # Fingerprint
 cd exemplos/fingerprint/cpp && make
 
 # Display LCD
-cd exemplos/displaylc/cpp && make
+cd exemplos/displaylcd/cpp && make
 
-# Limpar tudo
+# Limpar (rodar dentro de cada pasta)
 make clean
 ```
 
@@ -117,10 +145,10 @@ make clean
 
 ```bash
 # Fingerprint
-cd exemplos/fingerprint/java && mvn clean package
+cd exemplos/fingerprint/java && mvn -q clean package
 
 # Display LCD
-cd exemplos/displaylc/java && mvn clean package
+cd exemplos/displaylcd/java && mvn -q clean package
 
 # Compilar sem testes
 mvn clean package -DskipTests
@@ -128,13 +156,13 @@ mvn clean package -DskipTests
 
 ## 📖 Documentação Detalhada
 
-Consulte o README específico de cada módulo:
+Consulte o README específico de cada variante:
 
 **Fingerprint:**
-- [Documentação Fingerprint](fingerprint/README.md) - Comparação C++ vs Java, pré-requisitos, troubleshooting
+- [Documentação Fingerprint (C)](fingerprint/c/README.md) - arquivos, compilação, execução
 
 **Display LCD:**
-- [Documentação Display LCD](displaylc/README.md) - API, testes disponíveis, exemplos de uso
+- [Documentação Display LCD (C)](displaylcd/c/README.md) - lista completa de testes, compilação, execução
 
 ## 📊 Comparação: Fingerprint vs Display LCD
 
@@ -160,11 +188,10 @@ Consulte o README específico de cada módulo:
 # Verificar instalação
 ls -l /usr/local/lib/libK044AVT.so
 
-# Se não encontrado, reinstalar
-sudo /caminho/para/libk044avt/install.sh
-
-# Ou definir variável de ambiente
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+# Se não encontrado, reinstalar (ajuste driver64/driver32 conforme sua arquitetura)
+cd ~/avanttec/driver64
+sudo cp lib/libK044AVT.so /usr/local/lib/
+sudo ldconfig
 ```
 
 ### "Teclado não conectado"
@@ -179,7 +206,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 ### "Maven not found"
 ```bash
-sudo apt-get install -y maven
+sudo apt install -y maven
 mvn --version  # Verificar
 ```
 
@@ -188,20 +215,26 @@ mvn --version  # Verificar
 # Verificar headers
 ls -l /usr/local/include/display_driver.h
 
-# Reinstalar biblioteca
-sudo /caminho/para/libk044avt/install.sh
+# Reinstalar biblioteca (ajuste driver64/driver32 conforme sua arquitetura)
+cd ~/avanttec/driver64
+sudo cp lib/libK044AVT.so /usr/local/lib/
+sudo cp include/*.h include/*.hpp /usr/local/include/
 sudo ldconfig
 ```
 
 ## 🎯 Escolhendo seu Primeiro Exemplo
 
-**Começar com C/C++:**
-1. Fingerprint: `exemplos/fingerprint/cpp/` → `make` → `sudo ./finger`
-2. Display LCD: `exemplos/displaylc/cpp/` → `make` → `sudo ./lcd`
+**Começar com C:**
+1. Fingerprint: `exemplos/fingerprint/` → `sudo make -C ./c` → `sudo ./c/test_fingerprint`
+2. Display LCD: `exemplos/displaylcd/` → `sudo make -C ./c` → `sudo ./c/diagnostico_lcd`
+
+**Começar com C++:**
+1. Fingerprint: `exemplos/fingerprint/cpp/` → `make` → `sudo ./finger2_v2`
+2. Display LCD: `exemplos/displaylcd/cpp/` → `make` → `sudo ./lcd`
 
 **Começar com Java:**
 1. Fingerprint: `exemplos/fingerprint/java/` → `mvn package` → `sudo java -jar target/...jar`
-2. Display LCD: `exemplos/displaylc/java/` → `mvn package` → `sudo java -jar target/...jar`
+2. Display LCD: `exemplos/displaylcd/java/` → `mvn package` → `sudo java -jar target/...jar`
 
 ## 🤝 Contribuições
 
@@ -213,4 +246,4 @@ Para adicionar novos exemplos:
 
 ---
 
-**Última atualização**: 2026-08-24
+**Última atualização**: 2026-09-12

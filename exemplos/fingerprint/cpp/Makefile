@@ -1,21 +1,22 @@
 # =============================================================================
-# Makefile — exemplos do modulo de identificacao digital (C++)
+# Makefile — exemplo FINGERPRINT (finger2_v2.cpp.cpp)
 # Avanttec Tecnologia — TEC44AVT / libK044AVT.so
 #
+# Compila e linka a libK044AVT.so ja' instalada.
+#
 # USO
-#   make 
-#   sudo ./finger2_v2
+#   make
+#   sudo ./finger2_v2.cpp
 #
 # BIBLIOTECA EM OUTRO LUGAR
-#   Por padrao procura em /usr/local, que e' onde o "make install" instala.
-#
+#   Por padrao procura em /usr/local
+#   Para apontar outro caminho:
 #
 # PRE-REQUISITOS
 #   - libK044AVT.so instalada
 #   - headers display_driver.h e k044avt.hpp
 #   - g++ com suporte a C++17
 #
-# O executavel precisa de acesso direto as portas PS/2, entao roda com sudo.
 # =============================================================================
 
 CXX      = g++
@@ -24,18 +25,20 @@ CXXFLAGS = -O2 -Wall -Wextra -std=c++17
 LIB_DIR ?= /usr/local/lib
 INC_DIR ?= /usr/local/include
 
-# finger2_v2 e' o exemplo de referencia
 TARGET   = finger2_v2
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-# Regra generica: vale para qualquer .cpp entregue nesta pasta.
-%: %.cpp
+$(TARGET): finger2_v2.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $< \
 	    -I$(INC_DIR) -L$(LIB_DIR) -lK044AVT -lpthread \
 	    -Wl,-rpath,$(LIB_DIR)
 
 clean:
 	rm -f $(TARGET)
+	
+	
+	
+

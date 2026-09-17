@@ -6,8 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Estrutura JNA mapeando k044_fp_nfpage_t (página de informações do módulo).
- * A ordem e os tipos dos campos espelham exatamente o struct em display_driver.h.
+ * Estrutura JNA mapeando a página de informações do módulo. 
  */
 public class NFPage extends Structure {
     public short registros;
@@ -40,7 +39,7 @@ public class NFPage extends Structure {
                 "sensor_name", "password", "jtag_flag");
     }
 
-    /** Converte um campo char[] (terminado em NUL) em String legível. */
+    /** Converte um campo char[] (terminado em NUL) em String. */
     static String cstr(byte[] raw) {
         int n = 0;
         while (n < raw.length && raw[n] != 0) n++;

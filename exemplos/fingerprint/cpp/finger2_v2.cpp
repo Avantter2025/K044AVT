@@ -1,18 +1,31 @@
-/**
- * finger2_v2.cpp — "Revisão 2" de finger2.cpp: mesmo menu/comportamento
+/*******************************************************************************
+ * @file      finger2_v2.cpp
+ * @brief     Exemplo interativo (CLI) do Fingerprint via libK044AVT.so.
+ * @project   Teclado de 44 Teclas PS/2 (LCD 2x40, Biometria e Tecl. Aux)
+ * @author    Cariyl Kirsten <projetos@avanttectecnologia.com.br>
+ * @company   Avanttec Tecnologia Ltda. - www.avanttectecnologia.com.br
+ * @date      19/08/2026
+ * @version   v1.0.0
  *
- * Compilar: make
- * Executar: sudo ./finger2_v2
- */
+ * @details
+ * API pública do Fingerprint 
+ *
+ * @note    Compilar: make
+ * @note    Executar: sudo ./finger2_v2 (k044_open() precisa de acesso às portas I/O)
+ * @target    Linux (x86_64 / Industrial PC)
+ *
+ * @copyright (c) 2026 Avanttec Tecnologia. Todos os direitos reservados.
+ ******************************************************************************/
 
 #include "display_driver.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cstdint>
 
 /* ------------------------------------------------------------------------- */
-/* Utilitários de entrada e diagnóstico (idênticos a finger2.cpp)            */
+/* Utilitários de entrada e diagnóstico                                      */
 /* ------------------------------------------------------------------------- */
 
 static int read_line(char *buf, size_t len)
@@ -130,8 +143,7 @@ static void op_count(void)
     printf("  Templates válidos no banco: %u\n", count);
 }
 
-/* Cadastro em 3 leituras — todo o fluxo (esperar/capturar/retirar/mesclar/
- * gravar) agora  em k044_fp_enroll()  */
+/* Cadastro em 3 leituras */
 static void op_enroll(void)
 {
     int id = prompt_int("ID para cadastrar (1-999)", 1);
@@ -144,7 +156,7 @@ static void op_enroll(void)
         printf("  Cadastro falhou (%d).\n", r);
 }
 
-/* Identificação = busca de tentativa única (max_attempts=1) */
+/* Identificação em tentativa única */
 static void op_identify(void)
 {
     printf("  Coloque o dedo no sensor para identificar...\n");
@@ -157,7 +169,7 @@ static void op_identify(void)
         printf("  Digital não reconhecida (%d).\n", r);
 }
 
-/* Busca com até 3 tentativas de captura+busca. */
+/* Busca com até 3 tentativas de captura+busca */
 static void op_search(void)
 {
     printf("  Coloque o dedo no sensor para buscar no banco (até 3 tentativas)...\n");
@@ -206,21 +218,19 @@ static void op_led(void)
     printf("  4) Piscando lento (respirando)\n");
     int choice = prompt_int("Opção", 1);
 
-    uint8_t func;
+    int r;
     const char *label;
     switch (choice) {
-        case 1: func = K044_FP_LED_ALWAYS_ON;  label = "aceso";           break;
-        case 2: func = K044_FP_LED_ALWAYS_OFF; label = "apagado";         break;
-        case 3: func = K044_FP_LED_FLASHING;   label = "piscando (rápido)"; break;
-        case 4: func = K044_FP_LED_BREATHING;  label = "piscando lento (respirando)"; break;
+        case 1: r = k044_fp_led_on_fast();        label = "aceso";           break;
+        case 2: r = k044_fp_led_off_fast();       label = "apagado";         break;
+        case 3: r = k044_fp_led_flashing_fast();  label = "piscando (rápido)"; break;
+        case 4: r = k044_fp_led_breathing_fast(); label = "piscando lento (respirando)"; break;
         default:
             printf("  Opção inválida.\n");
             return;
     }
 
-    int r = fp_exec("k044_fp_led_config",
-                    k044_fp_led_config(func, K044_FP_LED_COLOR_BLUE,
-                                        K044_FP_LED_COLOR_BLUE, 0));
+    fp_exec("k044_fp_led_*_fast", r);
     if (r == K044_OK)
         printf("  LED %s.\n", label);
     else
@@ -277,9 +287,7 @@ int main(void)
     }
 
     k044_fp_set_callback(fp_progress, NULL);
-    //k044_set_log_level(K044_LOG_DEBUG);
-    k044_set_log_level(K044_LOG_TRACE);
-
+ 
     printf("--- Diagnóstico inicial ---\n");
     diag_status();
     printf("---------------------------\n");

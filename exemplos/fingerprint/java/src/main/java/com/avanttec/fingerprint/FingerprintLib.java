@@ -9,14 +9,7 @@ import com.sun.jna.ptr.ShortByReference;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Interface JNA mapeando as rotinas do módulo de impressão digital exportadas
- * por libK044AVT.so (funções k044_fp_*), mais o ciclo de vida do dispositivo.
- * 
- * A propriedade de sistema jna.library.path deve apontar para o diretório com
- * a libK044AVT.so (../../../driver_display a partir desta pasta):
- *   java -Djna.library.path=../../../driver_display -jar &lt;fat-jar&gt;.jar
- */
+/** Interface JNA para as rotinas do Fingerprint exportadas por libK044AVT.so  */
 public interface FingerprintLib extends Library {
 
     FingerprintLib INSTANCE = Native.load("K044AVT", FingerprintLib.class,
@@ -81,7 +74,7 @@ public interface FingerprintLib extends Library {
     String k044_fp_confirmation_str(int code);
     int    k044_fp_last_confirmation_code();
 
-    /* ---- LED do sensor (comando 0x3C, PS_ControlBLN) ---- */
+    /* ---- LED do sensor ---- */
     int K044_FP_LED_BREATHING   = 1;
     int K044_FP_LED_FLASHING    = 2;
     int K044_FP_LED_ALWAYS_ON   = 3;
@@ -100,7 +93,7 @@ public interface FingerprintLib extends Library {
     int k044_fp_led_config(byte func, byte startColor, byte endColor, byte cycleTimes);
 
     /**
-     * Callback de progresso (k044_fp_callback_t): void(int status, int step, void*).
+     * Callback de progresso 
      * status == 0 → progresso normal; != 0 → código de confirmação (erro).
      */
     interface FpCallback extends Callback {
