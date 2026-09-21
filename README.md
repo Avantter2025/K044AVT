@@ -18,7 +18,7 @@ K044AVT/
 │   └── java/k044-reprog-demo-1.0.0.jar
 │
 ├── instrucao-inicial.md    Guia de instalação e execução passo a passo
-├── rotinas_biblioteca.txt   Referência da API (funções, parâmetros, retorno)
+├── API libK044AVT.pdf      Referência da API (Biblioteca de funções)
 │
 └── exemplos/                Exemplos práticos em C, C++ e Java
     ├── README.md            Guia completo dos exemplos
